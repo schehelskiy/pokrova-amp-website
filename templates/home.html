@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+    <div class="carousel-indicators" style="bottom: 25px; z-index: 1000;">
+        {% for item in latest_news %}
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                class="indicator-btn {% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}">
+        </button>
+        {% endfor %}
+    </div>
+
+    <div class="carousel-inner">
+        {% for item in latest_news %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="6000">
+            <div class="hero-full-screen">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" class="hero-bg-img" alt="{{ item.title }}">
+                {% else %}
+                    <div class="hero-placeholder d-flex align-items-center justify-content-center h-100" style="background: #eef0f3;">
+                        <i class="fas fa-image fa-5x text-muted opacity-25"></i>
+                    </div>
+                {% endif %}
+                <div class="hero-overlay-content" style="background: linear-gradient(to bottom, rgba(17, 17, 17, 0.3) 0%, rgba(26, 26, 26, 0.7) 70%, rgba(10, 10, 10, 1) 100%);">
+                    <div class="container h-100 d-flex flex-column justify-content-end pb-5">
+                        <div class="hero-text-block ps-lg-5 ps-3" data-aos="fade-up">
+                            <div class="text-gold fw-bold mb-2 text-uppercase d-flex align-items-center small-date">
+                                <i class="far fa-calendar-alt me-2"></i> {{ item.created_at|date:"d.m.Y" }}
+                            </div>
+                            <h1 class="display-3 fw-900 text-white text-uppercase mb-4 hero-heading" style="text-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                                {{ item.title }}
+                            </h1>
+                            <a href="{% url 'news_detail' item.id %}" class="btn-hero-action">Читати далі</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="carousel-item active">
+            <div class="hero-full-screen d-flex align-items-center justify-content-center" style="background: #f5f6f8;">
+                <h1 class="text-muted text-center px-3 fw-bold">Новин поки немає</h1>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon p-3 rounded-circle" style="background-color: rgba(255,255,255,0.2); backdrop-filter: blur(5px);" aria-hidden="true"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon p-3 rounded-circle" style="background-color: rgba(255,255,255,0.2); backdrop-filter: blur(5px);" aria-hidden="true"></span>
+    </button>
+</div>
+
+<section class="shakhtar-match-section">
+
+    <div class="shakhtar-team-toggle nav" role="tablist">
+        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#shakhtar-main-team" type="button" role="tab">ПОКРОВА АМП</button>
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#shakhtar-second-team" type="button" role="tab">ПОКРОВА АМП-2</button>
+    </div>
+
+    <div class="tab-content h-100">
+
+        <div class="tab-pane fade show active h-100" id="shakhtar-main-team" role="tabpanel">
+
+            <div class="shakhtar-bg-layer" style="background-image: url('{% if upcoming_main and upcoming_main.first.background_image %}{{ upcoming_main.first.background_image.url }}{% elif past_main and past_main.first.background_image %}{{ past_main.first.background_image.url }}{% else %}https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=2000{% endif %}');"></div>
+
+            <div class="shakhtar-overlay-layer"></div>
+
+            <div class="shakhtar-content-container">
+
+                {% if upcoming_main %}
+                    {% with match=upcoming_main.first %}
+                    <div class="text-center mb-4 position-relative z-10">
+                        <span class="shakhtar-league-text">{{ match.league }}</span>
+                    </div>
+
+                    <div class="shakhtar-next-match-grid">
+                        <div class="shakhtar-team home text-center">
+                            <img src="{% if match.home_logo %}{{ match.home_logo.url }}{% endif %}" alt="{{ match.home_team }}" class="shakhtar-big-logo">
+                            <div class="shakhtar-team-name">{{ match.home_team }}</div>
+                        </div>
+
+                        <div class="shakhtar-match-info text-center">
+                            <div class="shakhtar-datetime">{{ match.date|date:"d E Y \Р. H:i"|upper }}</div>
+                            <a href="{% url 'match_detail' match.id %}" class="shakhtar-action-btn">Деталі матчу</a>
+                        </div>
+
+                        <div class="shakhtar-team away text-center">
+                            <img src="{% if match.away_logo %}{{ match.away_logo.url }}{% endif %}" alt="{{ match.away_team }}" class="shakhtar-big-logo">
+                            <div class="shakhtar-team-name">{{ match.away_team }}</div>
+                        </div>
+                    </div>
+                    {% endwith %}
+                {% else %}
+                    <div class="text-center position-relative z-10 py-5 my-5">
+                        <h4 class="text-white text-uppercase fw-bold" style="letter-spacing: 2px;">Наступний матч ще не заплановано</h4>
+                    </div>
+                {% endif %}
+
+                {% if past_main %}
+                <div class="shakhtar-past-matches-container">
+                    <div class="shakhtar-divider">
+                        <span>Результати попередніх матчів</span>
+                    </div>
+
+                    <div class="shakhtar-past-row">
+                        {% for p_match in past_main|slice:":4" %}
+                        <a href="{% url 'match_detail' p_match.id %}" class="shakhtar-past-item">
+                            <img src="{% if p_match.home_logo %}{{ p_match.home_logo.url }}{% endif %}" class="shakhtar-small-logo" alt="home">
+                            <div class="shakhtar-past-score-block">
+                                <div class="shakhtar-score-text">{{ p_match.home_score }}:{{ p_match.away_score }}</div>
+                                <div class="shakhtar-date-text">{{ p_match.date|date:"d E"|lower }}</div>
+                            </div>
+                            <img src="{% if p_match.away_logo %}{{ p_match.away_logo.url }}{% endif %}" class="shakhtar-small-logo" alt="away">
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div class="tab-pane fade h-100" id="shakhtar-second-team" role="tabpanel">
+
+            <div class="shakhtar-bg-layer" style="background-image: url('{% if upcoming_second and upcoming_second.first.background_image %}{{ upcoming_second.first.background_image.url }}{% elif past_second and past_second.first.background_image %}{{ past_second.first.background_image.url }}{% else %}https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=2000{% endif %}');"></div>
+
+            <div class="shakhtar-overlay-layer"></div>
+
+            <div class="shakhtar-content-container">
+
+                {% if upcoming_second %}
+                    {% with match=upcoming_second.first %}
+                    <div class="text-center mb-4 position-relative z-10">
+                        <span class="shakhtar-league-text">{{ match.league }}</span>
+                    </div>
+
+                    <div class="shakhtar-next-match-grid">
+                        <div class="shakhtar-team home text-center">
+                            <img src="{% if match.home_logo %}{{ match.home_logo.url }}{% endif %}" alt="{{ match.home_team }}" class="shakhtar-big-logo">
+                            <div class="shakhtar-team-name">{{ match.home_team }}</div>
+                        </div>
+
+                        <div class="shakhtar-match-info text-center">
+                            <div class="shakhtar-datetime">{{ match.date|date:"d E Y \Р. H:i"|upper }}</div>
+                            <a href="{% url 'match_detail' match.id %}" class="shakhtar-action-btn">Деталі матчу</a>
+                        </div>
+
+                        <div class="shakhtar-team away text-center">
+                            <img src="{% if match.away_logo %}{{ match.away_logo.url }}{% endif %}" alt="{{ match.away_team }}" class="shakhtar-big-logo">
+                            <div class="shakhtar-team-name">{{ match.away_team }}</div>
+                        </div>
+                    </div>
+                    {% endwith %}
+                {% else %}
+                    <div class="text-center position-relative z-10 py-5 my-5">
+                        <h4 class="text-white text-uppercase fw-bold" style="letter-spacing: 2px;">РОЗКЛАД МАТЧІВ ДЛЯ ПОКРОВИ АМП-2 ЗАТВЕРДЖУЄТЬСЯ</h4>
+                    </div>
+                {% endif %}
+
+                {% if past_second %}
+                <div class="shakhtar-past-matches-container">
+                    <div class="shakhtar-divider">
+                        <span>Результати попередніх матчів</span>
+                    </div>
+
+                    <div class="shakhtar-past-row">
+                        {% for p_match in past_second|slice:":4" %}
+                        <a href="{% url 'match_detail' p_match.id %}" class="shakhtar-past-item">
+                            <img src="{% if p_match.home_logo %}{{ p_match.home_logo.url }}{% endif %}" class="shakhtar-small-logo">
+                            <div class="shakhtar-past-score-block">
+                                <div class="shakhtar-score-text">{{ p_match.home_score }}:{{ p_match.away_score }}</div>
+                                <div class="shakhtar-date-text">{{ p_match.date|date:"d E"|lower }}</div>
+                            </div>
+                            <img src="{% if p_match.away_logo %}{{ p_match.away_logo.url }}{% endif %}" class="shakhtar-small-logo">
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<style>
+    /* === ІСНУЮЧІ СТИЛІ СЛАЙДЕРА (БЕЗ ЗМІН) === */
+    :root {
+        --bg-light: #f5f6f8;
+        --club-gold: #fccb1a;
+        --border-color: #eaeaea;
+        --card-bg-light: #f8f9fb;
+        --glass-light: rgba(255, 255, 255, 0.7);
+    }
+    .bg-gold { background-color: var(--club-gold) !important; }
+    .text-gold { color: #cfa12b !important; }
+    .hero-full-screen { width: 100%; position: relative; overflow: hidden; height: 100vh; }
+    .hero-bg-img { width: 100%; height: 100%; object-fit: cover; animation: zoomEffect 20s infinite alternate; }
+    @keyframes zoomEffect { from { transform: scale(1); } to { transform: scale(1.1); } }
+    .hero-overlay-content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
+    .hero-text-block { pointer-events: auto; max-width: 900px; margin-bottom: 80px; position: relative; z-index: 20; }
+    .indicator-btn { width: 30px !important; height: 3px !important; background-color: rgba(255, 255, 255, 0.5) !important; border: none; margin: 0 4px; transition: 0.3s; }
+    .indicator-btn.active { background-color: var(--club-gold) !important; opacity: 1 !important; transform: scaleX(1.2); }
+    .btn-hero-action { display: inline-block; background-color: var(--club-gold); color: black; font-weight: 800; text-transform: uppercase; padding: 15px 40px; border-radius: 50px; text-decoration: none; transition: all 0.3s ease; border: 2px solid var(--club-gold); box-shadow: 0 5px 15px rgba(252, 203, 26, 0.3); }
+    .btn-hero-action:hover { background: #fff; border-color: #fff; color: #000; transform: translateY(-3px); }
+    @media (max-width: 992px) { .hero-full-screen { height: 55vh; min-height: 380px; } .hero-text-block { margin-bottom: 30px; } .hero-heading { font-size: 1.5rem !important; line-height: 1.3; margin-bottom: 15px !important; } .small-date { font-size: 0.75rem; margin-bottom: 8px !important; } .btn-hero-action { padding: 10px 25px; font-size: 0.85rem; } }
+
+
+    /* =========================================
+       СТИЛІ СЕКЦІЇ "ШАХТАР"
+       ========================================= */
+    .shakhtar-match-section {
+        position: relative;
+        width: 100%;
+        min-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: #000;
+        color: #fff;
+        overflow: hidden;
+        padding: 80px 0;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .shakhtar-bg-layer {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-size: cover;
+        background-position: center top;
+        z-index: 1;
+    }
+
+    /* ОНОВЛЕНО: Градієнт від дуже темного зверху до прозорішого знизу */
+    .shakhtar-overlay-layer {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.3) 100%);
+        z-index: 2;
+    }
+
+    /* Перемикач команд збоку */
+    .shakhtar-team-toggle {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        z-index: 20;
+        display: flex;
+        gap: 10px;
+    }
+    .shakhtar-team-toggle .nav-link {
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff !important;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 8px 24px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .shakhtar-team-toggle .nav-link.active,
+    .shakhtar-team-toggle .nav-link:hover {
+        background: var(--club-gold) !important;
+        color: #000 !important;
+        border-color: var(--club-gold) !important;
+        box-shadow: 0 4px 15px rgba(252, 203, 26, 0.3);
+    }
+
+    /* Контейнер контенту */
+    .shakhtar-content-container {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .shakhtar-league-text {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #e0e0e0;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .shakhtar-next-match-grid {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 30px;
+        margin-top: 10px;
+        margin-bottom: 50px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .shakhtar-team { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+    .shakhtar-big-logo { width: 160px; height: 160px; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6)); }
+    .shakhtar-team-name { margin-top: 20px; font-size: 1.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+
+    .shakhtar-match-info { display: flex; flex-direction: column; align-items: center; }
+    .shakhtar-datetime { font-size: 1.3rem; font-weight: 800; letter-spacing: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.9); color: #fff; }
+
+    .shakhtar-action-btn {
+        display: inline-block; margin-top: 20px; padding: 10px 30px;
+        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.4);
+        color: #fff; font-size: 0.8rem; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 1.5px; border-radius: 4px; text-decoration: none; backdrop-filter: blur(5px);
+        transition: all 0.4s ease;
+    }
+    .shakhtar-action-btn:hover {
+        background: var(--club-gold); color: #000; border-color: var(--club-gold);
+        transform: translateY(-3px); box-shadow: 0 5px 20px rgba(252, 203, 26, 0.4);
+    }
+
+    /* Рядок минулих матчів (Низ) */
+    .shakhtar-past-matches-container { width: 100%; margin-top: 20px; position: relative; z-index: 10; }
+
+    .shakhtar-divider {
+        display: flex; align-items: center; text-align: center; color: rgba(255, 255, 255, 0.9);
+        font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 25px;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+    .shakhtar-divider::before, .shakhtar-divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+    .shakhtar-divider span { padding: 0 20px; }
+
+    .shakhtar-past-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 30px; }
+
+    .shakhtar-past-item {
+        display: flex; align-items: center; gap: 15px; text-decoration: none; color: #fff;
+        transition: 0.3s; padding: 8px 12px; border-radius: 8px;
+    }
+    .shakhtar-past-item:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+    /* ОНОВЛЕНО: Логотипи збільшено, світіння (glow) прибрано */
+    .shakhtar-small-logo {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+    }
+
+    .shakhtar-past-score-block { text-align: center; line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    .shakhtar-score-text { font-size: 1.4rem; font-weight: 900; letter-spacing: 1px; }
+    .shakhtar-date-text { font-size: 0.7rem; color: rgba(255,255,255,0.8); margin-top: 5px; text-transform: lowercase; font-weight: 600; }
+
+    /* === АДАПТАЦІЯ ДЛЯ ТЕЛЕФОНІВ === */
+    @media (max-width: 768px) {
+        .shakhtar-match-section { padding: 50px 0 20px 0; }
+
+        .shakhtar-team-toggle {
+            top: 25px; right: 50%; transform: translateX(50%);
+            width: 100%; justify-content: center;
+        }
+
+        .shakhtar-content-container { margin-top: 50px; padding: 0 10px; }
+
+        .shakhtar-next-match-grid {
+            grid-template-columns: 1fr 1fr; grid-template-rows: auto auto;
+            gap: 10px; margin-bottom: 30px;
+        }
+
+        .shakhtar-team.home { grid-column: 1; grid-row: 1; }
+        .shakhtar-team.away { grid-column: 2; grid-row: 1; }
+
+        .shakhtar-match-info { grid-column: 1 / -1; grid-row: 2; margin-top: 15px; }
+
+        .shakhtar-big-logo { width: 90px; height: 90px; }
+        .shakhtar-team-name { font-size: 1rem; margin-top: 10px; }
+        .shakhtar-datetime { font-size: 1rem; }
+
+        .shakhtar-past-row {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            justify-content: flex-start;
+            padding-bottom: 15px;
+            gap: 10px;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+        }
+        .shakhtar-past-row::-webkit-scrollbar { display: none; }
+
+        .shakhtar-past-item {
+            flex: 0 0 auto;
+            width: 165px;
+            justify-content: space-between;
+            padding: 8px 10px;
+            scroll-snap-align: start;
+            background: rgba(0,0,0,0.3); /* Трохи затемнюємо фон картки на мобілці, щоб краще читалось */
+        }
+        .shakhtar-small-logo { width: 45px; height: 45px; }
+        .shakhtar-score-text { font-size: 1.2rem; }
+    }
+</style>
+
+{% endblock %}

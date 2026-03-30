@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    body, .page-wrapper {
+        background-color: #0a0a0a !important;
+        color: #ffffff !important;
+    }
+</style>
+
+<div class="valencia-partners-wrapper">
+
+    <div class="partners-dark-header d-flex align-items-center">
+        <div class="container text-center position-relative z-3">
+            <h1 class="page-title text-uppercase fw-900 text-white mb-2" data-aos="fade-down">
+                Наші <span class="text-gold-dark">Партнери</span>
+            </h1>
+            <p class="text-light-muted fw-bold mx-auto mb-0" style="font-size: 1.1rem; max-width: 700px;" data-aos="fade-up" data-aos-delay="100">
+                Ми пишаємося співпрацею з компаніями та фондами, які поділяють наші цінності та допомагають ампфутболу розвиватися в Україні.
+            </p>
+        </div>
+    </div>
+
+    <div class="container pb-5 pt-4 mt-4">
+
+        <div class="partner-tier-section" data-aos="fade-up">
+            <h3 class="tier-valencia-title">ГЕНЕРАЛЬНИЙ ПАРТНЕР</h3>
+
+            <div class="bosco-grid-container">
+                <a href="https://salesianmissions.org/about-us/who-we-are/" target="_blank" class="partner-item tier-bosco-item">
+                    <img src="{% static 'images/bosco/mission_bonn.png' %}" alt="Don Bosco Mission Bonn">
+                </a>
+                <a href="https://www.don-bosco-mondo.de/weltwerker-hautnah" target="_blank" class="partner-item tier-bosco-item">
+                    <img src="{% static 'images/bosco/mondo.png' %}" alt="Don Bosco Mondo">
+                </a>
+                <a href="https://www.donbosco.ch/ueber-uns/jugendhilfe-weltweit/" target="_blank" class="partner-item tier-bosco-item">
+                    <img src="{% static 'images/bosco/jugendhilfe.png' %}" alt="Jugendhilfe Weltweit">
+                </a>
+                <a href="#" target="_blank" class="partner-item tier-bosco-item">
+                    <img src="{% static 'images/bosco/salesian.png' %}" alt="Salesian Missions">
+                </a>
+            </div>
+        </div>
+
+        <div class="partner-tier-section mt-5 pt-4" data-aos="fade-up">
+            <h3 class="tier-valencia-title">ОФІЦІЙНИЙ ПАРТНЕР</h3>
+            <div class="row justify-content-center align-items-center">
+                <div class="col-12 text-center">
+                    <a href="https://kredo-development.com.ua/" target="_blank" class="partner-item tier-kredo">
+                        <img src="{% static 'images/kredo_logo.png' %}" alt="KREDO Development">
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="partner-tier-section mt-5 pt-4" data-aos="fade-up">
+            <h3 class="tier-valencia-title">ПАРТНЕР</h3>
+            <div class="row justify-content-center align-items-center">
+                <div class="col-12 text-center">
+                    <a href="https://apteka-ds.com.ua/" target="_blank" class="partner-item tier-ds">
+                        <img src="{% static 'images/ds_logo.png' %}" alt="Аптека DS">
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="partner-tier-section mt-5 pt-4" data-aos="fade-up">
+            <h3 class="tier-valencia-title">ЗА ПІДТРИМКИ</h3>
+            <div class="row justify-content-center align-items-center g-5">
+                <div class="col-6 col-md-4 text-center">
+                    <a href="https://city-adm.lviv.ua/" target="_blank" class="partner-item tier-gov">
+                        <img src="{% static 'images/lmr_logo.png' %}" alt="Львівська міська рада">
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 text-center">
+                    <a href="https://loda.gov.ua/" target="_blank" class="partner-item tier-gov">
+                        <img src="{% static 'images/loda_logo.png' %}" alt="Львівська ОВА">
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="premium-cta-banner mt-5 mb-4" data-aos="zoom-in">
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-center text-lg-start mb-4 mb-lg-0">
+                    <h2 class="text-white fw-900 text-uppercase mb-2">СТАТИ ПАРТНЕРОМ</h2>
+                    <p class="text-light-muted fw-bold mb-0" style="font-size: 1.05rem;">
+                        Долучайтеся до розвитку професійного ампфутболу в Україні. Оберіть зручний спосіб зв'язку з керівництвом клубу.
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-end social-contact-group">
+                        <a href="tel:+380673717878" class="contact-card phone-card">
+                            <i class="fas fa-phone-alt me-2"></i> +38 (067) 371-78-78
+                        </a>
+                        <a href="https://instagram.com/pokrova_lviv_amp_football/" target="_blank" class="contact-card instagram-card">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://facebook.com/pokrova.amp.lviv/" target="_blank" class="contact-card facebook-card">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* === ОСНОВНІ КОЛЬОРИ === */
+    :root {
+        --club-gold: #fccb1a;
+        --gold-dark: #cfa12b;
+    }
+
+    .text-gold-dark { color: var(--gold-dark) !important; }
+    .text-light-muted { color: #aaaaaa !important; }
+
+    .valencia-partners-wrapper { padding-top: 80px; min-height: 100vh; overflow-x: hidden; }
+
+    .partners-dark-header {
+        height: 300px;
+        background-color: #050505;
+        background-image: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, #0a0a0a 100%),
+                          url("{% static 'images/partners_header_bg.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        border-bottom: 4px solid var(--club-gold);
+    }
+    .partners-dark-header .page-title { font-size: 3.5rem; letter-spacing: 2px; text-shadow: 0 4px 15px rgba(0,0,0,0.8); }
+
+    .partner-tier-section { margin-bottom: 50px; }
+
+    .tier-valencia-title {
+        font-size: 1.2rem;
+        color: #ffffff;
+        font-weight: 900;
+        text-transform: uppercase;
+        margin-bottom: 35px;
+        text-align: center;
+        letter-spacing: 3px;
+        position: relative;
+    }
+    .tier-valencia-title::after {
+        content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+        width: 50px; height: 3px; background: var(--club-gold);
+    }
+
+    .partner-item {
+        display: inline-flex; align-items: center; justify-content: center;
+        text-decoration: none; padding: 0;
+    }
+    .partner-item img {
+        object-fit: contain; filter: brightness(1) opacity(1);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .partner-item:hover img { transform: scale(1.05); }
+
+    /* === СІТКА ДЛЯ 4 ЛОГОТИПІВ БОСКО === */
+    .bosco-grid-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4 колонки однакової ширини */
+        gap: 30px;
+        align-items: center;
+        justify-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .tier-bosco-item img { height: 90px; width: auto; max-width: 100%; } /* Висота для логотипів Боско */
+
+    /* === РОЗМІРИ ІНШИХ ЛОГОТИПІВ === */
+    .tier-kredo img { height: 280px; width: auto; max-width: 95vw; } /* МЕГА великий */
+    .tier-ds img { height: 160px; width: auto; max-width: 90vw; } /* Трохи більший ніж раніше */
+    .tier-gov img { height: 110px; width: auto; max-width: 100%; filter: grayscale(100%) brightness(200%); } /* ЛМР/ЛОДА (сірі/білі для солідності) */
+    .tier-gov:hover img { filter: grayscale(0%) brightness(100%); } /* Колір при наведенні */
+
+    /* === БАНЕР === */
+    .premium-cta-banner {
+        background: #151515; border-radius: 24px; padding: 50px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid #222;
+        border-left: 6px solid var(--club-gold); position: relative; overflow: hidden;
+    }
+    .premium-cta-banner::before {
+        content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 100%;
+        background: radial-gradient(circle at right, rgba(252, 203, 26, 0.1), transparent 70%); pointer-events: none;
+    }
+    .contact-card {
+        display: flex; align-items: center; justify-content: center; text-decoration: none;
+        font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: white;
+        transition: all 0.3s ease; background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1); position: relative; z-index: 2;
+    }
+    .phone-card {
+        height: 60px; padding: 0 35px; border-radius: 12px; font-size: 1.1rem;
+        background: var(--club-gold); color: black; border-color: var(--club-gold);
+    }
+    .phone-card:hover { background: white; color: black; border-color: white; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
+    .instagram-card, .facebook-card { width: 60px; height: 60px; border-radius: 12px; font-size: 1.5rem; }
+    .instagram-card:hover, .facebook-card:hover {
+        background: var(--club-gold); border-color: var(--club-gold); color: black;
+        transform: translateY(-3px); box-shadow: 0 10px 20px rgba(252, 203, 26, 0.2);
+    }
+
+    /* === 📱 МОБІЛЬНА АДАПТАЦІЯ === */
+    @media (max-width: 992px) {
+        .bosco-grid-container { grid-template-columns: repeat(2, 1fr); gap: 20px; } /* На планшетах по 2 в ряд */
+        .tier-bosco-item img { height: 80px; }
+    }
+
+    @media (max-width: 768px) {
+        .valencia-partners-wrapper { padding-top: 60px; }
+        .partners-dark-header { height: 240px; }
+        .partners-dark-header .page-title { font-size: 2.2rem; }
+
+        /* На телефонах Боско по 1 або 2 в ряд */
+        .bosco-grid-container { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .tier-bosco-item img { height: 60px; }
+
+        .tier-kredo img { height: 150px; }
+        .tier-ds img { height: 100px; }
+        .tier-gov img { height: 80px; }
+
+        .tier-valencia-title { font-size: 1rem; margin-bottom: 20px; }
+        .partner-tier-section { margin-bottom: 40px; }
+
+        .premium-cta-banner { padding: 40px 20px; border-radius: 16px; border-left: 4px solid var(--club-gold); }
+        .social-contact-group { width: 100%; justify-content: center; }
+        .contact-card { width: 100%; margin-bottom: 10px; }
+        .phone-card { font-size: 1rem; height: 55px; }
+        .instagram-card, .facebook-card { width: calc(50% - 5px); height: 55px; }
+    }
+</style>
+
+{% endblock %}

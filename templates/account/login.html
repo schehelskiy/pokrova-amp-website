@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+    <div class="auth-container row g-0">
+        <div class="col-lg-6">
+            <div class="auth-card-left h-100 d-flex flex-column justify-content-center">
+                <div class="text-center mb-4">
+                    <h4 class="fw-bold text-uppercase m-0 text-white" style="letter-spacing: 1px;">Вхід</h4>
+                    <div style="width: 40px; height: 3px; background: var(--club-gold); margin: 10px auto; border-radius: 2px;"></div>
+                    <p class="text-white-50 small">З поверненням, Герою!</p>
+                </div>
+
+                <div class="mb-4">
+                    <form method="post" action="{% provider_login_url 'google' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-light w-100 d-flex align-items-center justify-content-center py-2 shadow-sm google-btn-fix">
+                            <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" alt="Google" width="20" height="20" class="me-2">
+                            <span class="fw-bold text-dark small">Увійти через Google</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="d-flex align-items-center mb-4">
+                    <hr class="flex-grow-1 border-secondary border-opacity-25 m-0">
+                    <span class="px-3 text-white-50 small">або</span>
+                    <hr class="flex-grow-1 border-secondary border-opacity-25 m-0">
+                </div>
+
+                <form method="post" action="{% url 'account_login' %}">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                        <div class="alert alert-danger p-2 mb-4 border-0 shadow-sm" style="background: rgba(255, 77, 77, 0.15); color: #ff6b6b; border-radius: 8px;">
+                            <p class="small m-0 text-center fw-bold text-white">Невірний логін або пароль</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label-light">Email</label>
+                        <input type="email" name="login" class="form-control form-control-sm auth-input" placeholder="Введіть email" required autofocus>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label-light">Пароль</label>
+                        <input type="password" name="password" class="form-control form-control-sm auth-input" placeholder="Введіть пароль" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 fw-bold text-uppercase py-3 auth-submit-btn shadow-lg">
+                        Увійти <i class="fas fa-sign-in-alt ms-2"></i>
+                    </button>
+                </form>
+
+                <div class="text-center mt-4 pt-3 border-top border-secondary border-opacity-25">
+                    <a href="{% url 'account_signup' %}" class="text-white-50 style-none small text-decoration-none hover-white">
+                        Немає акаунту? <span class="text-warning fw-bold">Створити</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 d-none d-lg-block">
+            <div class="auth-card-right h-100 p-5 text-white d-flex flex-column justify-content-center">
+                <h3 class="fw-bold text-uppercase mb-4">Твій кабінет</h3>
+                <div class="benefit-item d-flex align-items-start mb-4">
+                    <div class="icon-box me-3"><i class="fas fa-user-circle"></i></div>
+                    <div>
+                        <h6 class="fw-bold text-warning mb-1">Особистий профіль</h6>
+                        <p class="text-white-50 small m-0">Керуй своїми даними та налаштуваннями.</p>
+                    </div>
+                </div>
+                <div class="benefit-item d-flex align-items-start mb-4">
+                    <div class="icon-box me-3"><i class="fas fa-shopping-bag"></i></div>
+                    <div>
+                        <h6 class="fw-bold text-warning mb-1">Мої замовлення</h6>
+                        <p class="text-white-50 small m-0">Перевіряй статус покупок у магазині.</p>
+                    </div>
+                </div>
+                <div class="mt-auto pt-4 text-center">
+                    <p class="small text-white-50 fst-italic">"ФК Покрова - більше ніж футбол"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-page-wrapper { min-height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); padding: 80px 20px; }
+    .auth-container { width: 100%; max-width: 900px; background: #111; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .auth-card-left { padding: 40px; background: #0a0a0a; }
+    .form-label-light { color: #bbb; font-size: 0.75rem; font-weight: 700; margin-bottom: 5px; display: block; }
+    .auth-input { background: #1a1a1a !important; border: 1px solid #333 !important; color: white !important; font-size: 0.9rem !important; padding: 12px 15px !important; border-radius: 8px !important; }
+    .auth-card-right { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url("{% static 'join-bg.jpg' %}"); background-size: cover; background-position: center; border-left: 1px solid rgba(255,255,255,0.1); }
+    .icon-box { width: 45px; height: 45px; border-radius: 12px; background: rgba(252, 203, 26, 0.1); color: var(--club-gold); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .auth-submit-btn { border-radius: 8px; background-color: var(--club-gold); color: #000; border: none; transition: 0.3s; }
+    .auth-submit-btn:hover { background-color: white; transform: translateY(-2px); }
+    .google-btn { border-radius: 8px; transition: 0.3s; border: none; }
+    .google-btn:hover { background-color: #f1f1f1; transform: translateY(-1px); }
+</style>
+{% endblock %}

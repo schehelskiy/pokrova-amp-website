@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="about-page-wrapper">
+
+    <div class="about-visual-desktop d-none d-lg-flex" style="background-image: url('{% static 'about-bg.jpg' %}');">
+        <div class="overlay-gradient-left"></div>
+        <div class="visual-content-box">
+            <h1 class="display-1 fw-900 text-uppercase text-white mb-0 hero-title">
+                ІСТОРІЯ<br><span class="text-warning">СИЛИ</span>
+            </h1>
+            <div class="mt-4 ps-4 border-start border-warning border-4 hero-desc">
+                <p class="text-white fs-5 m-0 fw-bold text-uppercase">Перша ампфутбольна команда України</p>
+                <p class="text-white-50 m-0">Герої, що пишуть історію на полі.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-content-panel">
+        <div class="content-container">
+
+            <div class="mobile-about-banner d-lg-none mb-5" style="background-image: url('{% static 'about-bg.jpg' %}');">
+                <div class="mobile-banner-overlay">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                         <img src="{% static 'logo.png' %}" alt="Logo" style="height: 50px;">
+                         <h1 class="fw-900 text-uppercase text-white m-0 lh-1" style="font-size: 2.5rem;">
+                            ІСТОРІЯ <span class="text-warning">СИЛИ</span>
+                        </h1>
+                    </div>
+                     <p class="text-white m-0 fw-bold text-uppercase small ls-1">Перша ампфутбольна команда України</p>
+                </div>
+            </div>
+
+            <div class="mb-5 ps-lg-4" data-aos="fade-up">
+                <img src="{% static 'logo.png' %}" alt="Logo" style="height: 60px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));" class="mb-4 d-none d-lg-block">
+                <h2 class="text-uppercase fw-900 text-dark mb-3">Хто ми є?</h2>
+                <p class="text-muted lead fw-bold">
+                    "Покрова Амп" – це ампфутбольний клуб для людей з ампутацією або порушенням функції однієї з кінцівок. Це спільнота цивільних та ветеранів, які доводять, що неможливого не існує.
+                </p>
+            </div>
+
+            <div class="timeline ps-lg-4">
+
+                <div class="timeline-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">Осінь 2023</div>
+                    <div class="timeline-content">
+                        <h4 class="text-dark fw-bold">Заснування</h4>
+                        <p class="text-muted small m-0">Клуб створили отці Салезіяни св.Івана Боско УГКЦ у Львові.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">Склад команди</div>
+                    <div class="timeline-content">
+                        <h4 class="text-dark fw-bold">Понад 35 гравців</h4>
+                        <p class="text-muted small m-0">80% команди — це військові та ветерани російсько-української війни з ампутаціями.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2024-2025</div>
+                    <div class="timeline-content">
+                        <h4 class="text-dark fw-bold">Міжнародний досвід</h4>
+                        <p class="text-muted small m-0">Два сезони у другому за силою чемпіонаті у Європі - польській AMP FUTBOL EKSTRA KLASA - 6 і 5 місце.<br>Перемога у "International Helvetia Cup-2024".</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item highlight" data-aos="fade-up" data-aos-delay="400">
+                    <div class="timeline-dot warning"></div>
+                    <div class="timeline-date text-gold-dark fw-900">Тріумф 2025</div>
+                    <div class="timeline-content border-warning-light">
+                        <h4 class="text-gold-dark fw-900">Чемпіони України 🏆</h4>
+                        <p class="text-muted small m-0">Перший офіційний чемпіонат. 14 перемог у 14 матчах. 58 забитих, 0 пропущених. Абсолютна домінація і також переможець Зимового та Весняного Кубків Ліги Дужих 2025.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" data-aos="fade-up" data-aos-delay="500">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">Досягнення</div>
+                    <div class="timeline-content">
+                        <h4 class="text-dark fw-bold">Збірна України</h4>
+                        <p class="text-muted small m-0">"Покрова АМП" — базова команда збірної. У жовтні 2025-го 10 гравців команди у складі національної збірної виграли Дивізіон С Ліги Націй та підвищились до Дивізону В.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" data-aos="fade-up" data-aos-delay="600">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">Майбутнє</div>
+                    <div class="timeline-content">
+                        <h4 class="text-dark fw-bold">Ліга Чемпіонів 2026</h4>
+                        <p class="text-muted small m-0">У червні 2026 клуб представить Україну на європейській арені ампфутболу.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="detailed-history mt-5 ps-lg-4" data-aos="fade-up">
+                <div class="info-card mb-5">
+                    <p class="text-muted">
+                        <span class="text-gold-dark fw-bold">"Покрова Амп"</span> – перша ампфутбольна команда в Україні, гравцями якої стали військові та ветерани російсько-української війни з ампутацією або порушенням функції однієї з кінцівок.
+                    </p>
+                    <p class="text-muted">
+                        Перше тренування відбулось <span class="text-dark fw-bold">12 вересня 2023-го року</span>. У ньому взяли участь 4-еро осіб. За два роки на тренуваннях команди ампфутбол спробували понад <span class="text-gold-dark fw-bold">50 військових і ветеранів</span> з усієї України.
+                    </p>
+                </div>
+
+                <h3 class="text-uppercase fw-900 text-dark mb-4" style="font-size: 1.2rem; letter-spacing: 2px;">
+                    Шлях до <span class="text-gold-dark">вершини</span>
+                </h3>
+
+                <div class="history-step mb-3">
+                    <div class="step-label">Лютий 2024</div>
+                    <p class="text-muted">Віцечемпіони міжнародного турніру у Ряшеві (Польща).</p>
+                </div>
+
+                <div class="history-step mb-3">
+                    <div class="step-label">Березень 2024</div>
+                    <p class="text-muted">Початок виступів у чемпіонаті Польщі – другою за силою лізі Європи. У підсумку посіли 6-те та 5-те місця у двох сезонах серед 8-ми команд Екстра-класи.</p>
+                </div>
+
+                <div class="history-step mb-3">
+                    <div class="step-label">Літо 2024</div>
+                    <p class="text-muted">Перемога на турнірі <span class="text-dark fw-bold">"International Helvetia Cup-2024"</span> у Швейцарії.</p>
+                </div>
+
+                <div class="history-step mb-4">
+                    <div class="step-label">2025</div>
+                    <p class="text-muted">Переможці Зимового та Весняного Кубків Ліги Дужих.</p>
+                </div>
+
+                <div class="championship-stats p-4 mb-5">
+                    <h4 class="text-dark fw-900 mb-3 text-uppercase" style="font-size: 1.1rem;">Перший Чемпіонат України</h4>
+                    <div class="row g-3">
+                        <div class="col-4">
+                            <div class="stat-num">14</div>
+                            <div class="stat-text">Матчів / Перемог</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-num">58</div>
+                            <div class="stat-text">Забито голів</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-num">0</div>
+                            <div class="stat-text">Пропущено</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3" style="border-top: 1px solid #eaeaea;">
+                        <p class="text-muted m-0 small fw-bold">Гравець команди <span class="text-gold-dark">Микола Олексієнко</span> став найкращим бомбардиром чемпіонату (15 голів).</p>
+                    </div>
+                </div>
+
+                <div class="national-team-block p-4 mb-5">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="ua-flag"></div>
+                        <h2 class="text-dark fw-900 text-uppercase m-0" style="font-size: 1.5rem;">Збірна України</h2>
+                    </div>
+
+                    <p class="text-gold-dark fw-bold mb-3 small">БАЗОВА КОМАНДА НАЦІОНАЛЬНОЇ ЗБІРНОЇ</p>
+                    <p class="text-muted mb-4">
+                        10 гравців "Покрови Амп" стали чемпіонами дивізіону С Ліги Націй та допомогли збірній підвищитись до дивізіону B.
+                    </p>
+
+                    <div class="squad-list mb-4">
+                        <h5 class="text-dark small fw-bold text-uppercase mb-2">Чемпіони Ліги Націй із «Покрови Амп»:</h5>
+                        <p class="text-muted small">
+                            Ярослав Качмар, Дмитро Куць, Юрій Дячук, Олександр Чинчлей, Микола Гатала, Валентин Осовський, Анатолій Медведюк, Дмитро Щегельський, Микола Олексієнко, <span class="text-gold-dark fw-bold">Юрій Сущ (капітан)</span>.
+                        </p>
+                    </div>
+
+                    <div class="staff-list">
+                        <h5 class="text-dark small fw-bold text-uppercase mb-2">Тренерський штаб:</h5>
+                        <ul class="list-unstyled small text-muted">
+                            <li><span class="text-dark fw-bold">Назарій Русецький</span> — головний тренер</li>
+                            <li><span class="text-dark fw-bold">Андрій Пітуля</span> — тренер воротарів</li>
+                            <li><span class="text-dark fw-bold">Олександр Василишин</span> — лікар</li>
+                            <li><span class="text-dark fw-bold">Владислав Лісний</span> — масажист</li>
+                            <li><span class="text-dark fw-bold">Роман Дудин</span> — масажист-фізіотерапевт</li>
+                            <li><span class="text-dark fw-bold">Богдан Мельник</span> — керівник проєкту «Ліга Дужих» Української асоціації футболу</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --bg-light: #f5f6f8;
+        --card-bg: #ffffff;
+        --text-dark: #1a1a1a;
+        --club-gold: #fccb1a;
+        --gold-dark: #cfa12b; /* Темніший золотий для читабельності тексту */
+        --border-light: #eaeaea;
+    }
+
+    .text-gold-dark { color: var(--gold-dark) !important; }
+
+    /* === ЛЕЯУТ === */
+    .about-page-wrapper { display: flex; min-height: 100vh; background-color: var(--bg-light); }
+
+    /* === ВІЗУАЛ ДЛЯ ПК === */
+    .about-visual-desktop { flex: 1; position: relative; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 60px; }
+    @media (min-width: 992px) {
+        .about-visual-desktop { height: 100vh; position: sticky; top: 0; flex: 0 0 50%; }
+    }
+
+    /* Градієнт плавно переходить у світлий фон правого блоку */
+    .overlay-gradient-left {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, var(--bg-light) 100%);
+        z-index: 1;
+    }
+
+    .visual-content-box { position: relative; z-index: 2; margin-bottom: 40px; }
+    .hero-title { text-shadow: 2px 2px 20px rgba(0,0,0,0.8); line-height: 0.8; }
+    .hero-desc { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 0 10px 10px 0; backdrop-filter: blur(10px); }
+
+    /* === ВІЗУАЛ ДЛЯ ТЕЛЕФОНУ === */
+    .mobile-about-banner { height: 250px; background-size: cover; background-position: center top; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .mobile-banner-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 25px; }
+    .ls-1 { letter-spacing: 1px; }
+
+    /* === ПРАВА ЧАСТИНА (КОНТЕНТ) === */
+    .about-content-panel { flex: 1; padding: 120px 40px 60px; background-color: var(--bg-light); }
+    .content-container { max-width: 600px; margin: 0 auto; }
+
+    /* === ТАЙМЛАЙН === */
+    .timeline { position: relative; padding-left: 20px; border-left: 2px solid #ddd; }
+    .timeline-item { position: relative; padding-left: 30px; margin-bottom: 40px; }
+
+    .timeline-dot { position: absolute; left: -29px; top: 0; width: 16px; height: 16px; background: #fff; border: 2px solid #ccc; border-radius: 50%; transition: 0.3s; }
+    .timeline-item:hover .timeline-dot { background: var(--gold-dark); border-color: var(--gold-dark); transform: scale(1.3); }
+    .timeline-dot.warning { background: var(--gold-dark); border-color: var(--gold-dark); box-shadow: 0 0 10px rgba(207, 161, 43, 0.4); }
+
+    .timeline-date { font-size: 0.8rem; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+
+    .timeline-content { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-light); transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+    .timeline-item:hover .timeline-content { transform: translateX(5px); border-color: var(--club-gold); box-shadow: 0 10px 25px rgba(252, 203, 26, 0.1); }
+
+    .timeline-content.border-warning-light { border-color: var(--gold-dark); background: #fffcf0; }
+
+    /* === ДЕТАЛЬНА ІСТОРІЯ === */
+    .history-step { border-left: 3px solid var(--gold-dark); padding-left: 15px; }
+    .step-label { color: var(--gold-dark); font-weight: 900; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 2px; }
+
+    /* === СТАТИСТИКА === */
+    .championship-stats { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 15px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+    .championship-stats::after { content: '🏆'; position: absolute; right: 10px; top: 10px; opacity: 0.05; font-size: 4rem; filter: grayscale(1); }
+    .stat-num { font-size: 2.2rem; font-weight: 900; color: var(--gold-dark); line-height: 1; }
+    .stat-text { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: 800; margin-top: 5px; }
+
+    /* === ЗБІРНА === */
+    .national-team-block { background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-light); box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+    .ua-flag { width: 30px; height: 20px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 3px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+    .staff-list li { margin-bottom: 8px; position: relative; padding-left: 15px; }
+    .staff-list li::before { content: '•'; position: absolute; left: 0; color: var(--gold-dark); font-weight: bold; }
+
+    @media (max-width: 992px) {
+        .about-page-wrapper { flex-direction: column; }
+        .about-content-panel { padding: 40px 20px 60px; }
+        .ps-lg-4 { padding-left: 0 !important; }
+    }
+</style>
+{% endblock %}

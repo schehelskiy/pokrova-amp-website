@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="detail-page-bg">
+    <div class="ambient-glow" style="pointer-events: none;"></div>
+
+    <div class="container position-relative" style="z-index: 5; padding-top: 160px; padding-bottom: 50px;">
+
+        <div class="mb-4" style="position: relative; z-index: 10000;">
+            <a href="{% url 'shop_list' %}"
+               class="btn btn-dark border-secondary rounded-pill px-4 py-2 text-white fw-bold d-inline-flex align-items-center shadow-lg hover-scale"
+               style="cursor: pointer;">
+                <i class="fas fa-arrow-left me-2"></i> Назад в магазин
+            </a>
+        </div>
+
+        <div class="cart-dropdown-wrapper" style="position: absolute; top: 150px; right: 20px; z-index: 9999;">
+            <button class="cart-btn-floating" onclick="toggleCart()">
+                <i class="fas fa-shopping-bag"></i>
+                {% if mini_cart_items %}
+                <span class="cart-badge">{{ mini_cart_items|length }}</span>
+                {% endif %}
+            </button>
+
+            <div id="miniCartPopup" class="mini-cart-popup">
+                <div class="cart-header">
+                    <span class="fw-bold">Ваш кошик</span>
+                    <button onclick="toggleCart()" class="close-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="cart-body scroll-hide">
+                    {% if mini_cart_items %}
+                    {% for item in mini_cart_items %}
+                    <div class="mini-cart-item">
+                        <div class="item-img">
+                            {% if item.product.image %}<img src="{{ item.product.image.url }}">{% else %}<i class="fas fa-camera"></i>{% endif %}
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">{{ item.product.name }}</div>
+                            <div class="item-meta">
+                                {{ item.quantity }} x <span class="text-warning">{{ item.product.price|floatformat:0 }} ₴</span>
+                                {% if item.size %} | {{ item.size }}{% endif %}
+                            </div>
+                        </div>
+                        <a href="{% url 'cart_remove' item.key %}" class="item-remove"><i class="fas fa-trash"></i></a>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="text-center py-4 opacity-50"><p class="m-0 small">Пусто</p></div>
+                    {% endif %}
+                </div>
+                <div class="cart-footer">
+                    <div class="d-flex justify-content-between mb-3 fw-bold"><span>Разом:</span><span class="text-warning">{{ mini_cart_total|floatformat:0 }} ₴</span></div>
+                    <a href="{% url 'cart_detail' %}" class="btn btn-warning w-100 fw-bold text-dark small">Оформити</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="detail-img-box">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100 bg-dark text-white-50">
+                            <i class="fas fa-camera fa-3x"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-6 text-white">
+                <h5 class="text-warning text-uppercase small fw-bold mb-2">{{ product.get_category_display }}</h5>
+                <h1 class="fw-900 display-5 mb-3">{{ product.name }}</h1>
+
+                <div class="fs-2 fw-bold mb-4">
+                    {% if product.old_price %}
+                        <span class="text-muted text-decoration-line-through me-2 fs-4">{{ product.old_price|floatformat:0 }}</span>
+                        <span class="text-danger">{{ product.price|floatformat:0 }} ₴</span>
+                    {% else %}
+                        <span>{{ product.price|floatformat:0 }} ₴</span>
+                    {% endif %}
+                </div>
+
+                <form action="{% url 'cart_add' product.id %}" method="post">
+                    {% csrf_token %}
+
+                    {% if product.has_sizes %}
+                    <div class="mb-4">
+                        <label class="d-block text-white-50 mb-2 small fw-bold">РОЗМІР:</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <input type="radio" class="btn-check" name="size" id="size_S" value="S" checked>
+                            <label class="btn btn-outline-light px-3 fw-bold" for="size_S">S</label>
+
+                            <input type="radio" class="btn-check" name="size" id="size_M" value="M">
+                            <label class="btn btn-outline-light px-3 fw-bold" for="size_M">M</label>
+
+                            <input type="radio" class="btn-check" name="size" id="size_L" value="L">
+                            <label class="btn btn-outline-light px-3 fw-bold" for="size_L">L</label>
+
+                            <input type="radio" class="btn-check" name="size" id="size_XL" value="XL">
+                            <label class="btn btn-outline-light px-3 fw-bold" for="size_XL">XL</label>
+
+                            <input type="radio" class="btn-check" name="size" id="size_XXL" value="XXL">
+                            <label class="btn btn-outline-light px-3 fw-bold" for="size_XXL">XXL</label>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if product.has_colors %}
+                    <div class="mb-4">
+                        <label class="d-block text-white-50 mb-2 small fw-bold">КОЛІР:</label>
+                        <select name="color" class="form-select bg-dark text-white border-secondary w-auto">
+                            <option value="Білий">Білий</option>
+                            <option value="Синій">Синій</option>
+                            <option value="Жовтий">Жовтий</option>
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex gap-3 align-items-center mb-4">
+                        <div class="quantity-box d-flex align-items-center border border-secondary rounded px-2">
+                            <button type="button" class="btn text-white" onclick="document.getElementById('aq').stepDown()">-</button>
+                            <input type="number" name="quantity" id="aq" value="1" min="1" class="bg-transparent border-0 text-white text-center" style="width: 40px;">
+                            <button type="button" class="btn text-white" onclick="document.getElementById('aq').stepUp()">+</button>
+                        </div>
+                        <button type="submit" class="btn btn-warning fw-bold px-5 py-2 rounded-pill shadow-glow">
+                            КУПИТИ
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-5 text-white-50">
+                    <h6 class="text-white fw-bold">Опис</h6>
+                    <p>{{ product.description|default:"Опис товару відсутній." }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleCart() { document.getElementById('miniCartPopup').classList.toggle('active'); }
+    // Закриття при кліку поза кошиком
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.cart-dropdown-wrapper')) {
+            document.getElementById('miniCartPopup').classList.remove('active');
+        }
+    });
+</script>
+
+<style>
+    /* ФОН */
+    .detail-page-bg { min-height: 100vh; background: #050505; position: relative; }
+    .ambient-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 30%, rgba(252, 203, 26, 0.05), transparent 70%); pointer-events: none; z-index: 0; }
+
+    .detail-img-box { border-radius: 20px; overflow: hidden; border: 1px solid #222; background: white; }
+    .detail-img-box img { width: 100%; height: auto; display: block; }
+    .shadow-glow:hover { box-shadow: 0 0 20px rgba(252, 203, 26, 0.5); }
+    .hover-scale:hover { transform: scale(1.05); transition: 0.3s; }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+    /* КОШИК */
+    .cart-btn-floating { width: 45px; height: 45px; border-radius: 50%; background: #111; border: 1px solid #333; color: white; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; }
+    .cart-badge { position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #ff3b30; border-radius: 50%; font-size: 0.7rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid #000; color: white; }
+    .mini-cart-popup { position: absolute; top: 55px; right: 0; width: 320px; background: #fff; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); color: #000; z-index: 10000; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: 0.3s; }
+    .mini-cart-popup.active { opacity: 1; visibility: visible; transform: translateY(0); }
+    .cart-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; }
+    .cart-body { max-height: 300px; overflow-y: auto; padding: 10px; }
+    .mini-cart-item { display: flex; gap: 10px; padding: 10px; border-bottom: 1px solid #eee; position: relative; }
+    .item-img { width: 40px; height: 40px; flex-shrink: 0; background: #eee; border-radius: 5px; overflow: hidden; }
+    .item-img img { width: 100%; height: 100%; object-fit: contain; }
+    .item-info { flex-grow: 1; font-size: 0.9rem; }
+    .item-remove { position: absolute; right: 10px; top: 10px; color: #ccc; }
+    .cart-footer { padding: 15px; background: #f8f9fa; border-top: 1px solid #eee; }
+
+    /* МОБІЛЬНА АДАПТАЦІЯ */
+    @media (max-width: 768px) {
+        /* Зменшуємо відступ на мобільному, бо там шапка менша */
+        .container { padding-top: 120px !important; }
+
+        .mini-cart-popup { position: fixed; top: 80px; left: 5%; right: 5%; width: 90%; }
+        /* Посуваємо кнопку кошика */
+        .cart-dropdown-wrapper { right: 15px !important; top: 110px !important; }
+    }
+</style>
+{% endblock %}

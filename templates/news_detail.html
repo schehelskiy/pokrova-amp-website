@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+
+<div class="news-detail-page">
+
+    <div class="article-hero">
+        {% if post.image %}
+            <a href="{{ post.image.url }}" data-fancybox data-caption="{{ post.title }}" class="hero-img-link">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="hero-img">
+            </a>
+        {% endif %}
+
+        <div class="hero-gradient-light"></div>
+
+        <div class="hero-content container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10" data-aos="fade-up">
+                    <div class="meta-badges mb-3">
+                        <span class="badge-custom bg-gold text-dark">NEWS</span>
+                        <span class="date-text text-dark"><i class="far fa-clock me-2 text-gold-dark"></i>{{ post.created_at|date:"d.m.Y" }}</span>
+                    </div>
+
+                    <h1 class="article-title text-dark">{{ post.title }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="article-body-wrapper">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="article-paper" data-aos="fade-up" data-aos-delay="100">
+
+                        <a href="{% url 'news_list' %}" class="back-link mb-5">
+                            <i class="fas fa-arrow-left me-2"></i> До всіх новин
+                        </a>
+
+                        <div class="article-content">
+                            {{ post.content|safe }}
+                        </div>
+
+                        <div class="share-block mt-5 d-flex align-items-center justify-content-between">
+                            <span class="share-label fw-900 text-dark text-uppercase ls-1">Поширити новину:</span>
+
+                            <div class="social-icons">
+                                <a href="https://t.me/share/url?url={{ request.build_absolute_uri }}&text={{ post.title }}"
+                                   target="_blank" class="social-btn telegram">
+                                    <i class="fab fa-telegram-plane"></i>
+                                </a>
+
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                                   target="_blank" class="social-btn facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+
+                                <a href="https://instagram.com/pokrova_lviv_amp_football/p" target="_blank" class="social-btn instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        {% if post.images.all %}
+                        <div class="gallery-section mt-5 pt-5 border-top border-light">
+                            <h3 class="section-title text-dark"><span>Фотозвіт</span></h3>
+                            <div class="gallery-grid">
+                                {% for photo in post.images.all %}
+                                    <div class="gallery-item premium-shadow">
+                                        <a href="{{ photo.image.url }}" data-fancybox="gallery">
+                                            <img src="{{ photo.image.url }}" alt="Фото">
+                                            <div class="overlay"><i class="fas fa-search-plus"></i></div>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="comments-wrapper mt-5 mb-5 pb-5">
+                        <h3 class="section-title mb-4 text-dark"><span>Коментарі ({{ comments.count }})</span></h3>
+
+                        <div class="comment-form-box p-4 mb-5 premium-shadow">
+                            {% if user.is_authenticated %}
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="avatar-circle me-3">{{ user.username|first|upper }}</div>
+                                    <div class="d-flex flex-column">
+                                        <span class="text-dark fw-bold">{{ user.username }}</span>
+                                        <span class="text-muted small">Ваша думка важлива для команди</span>
+                                    </div>
+                                </div>
+
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="input-group-custom">
+                                        <textarea name="user_comment" rows="3" placeholder="Напишіть, що думаєте про цю новину..." required></textarea>
+                                        <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <div class="login-prompt text-center py-4">
+                                    <i class="fas fa-lock mb-3 text-gold-dark fs-3 opacity-50"></i>
+                                    <p class="text-muted fw-bold mb-3">Тільки авторизовані вболівальники можуть коментувати.</p>
+                                    <a href="{% url 'account_login' %}" class="btn btn-gold-outline px-4 rounded-pill fw-bold text-uppercase">Увійти</a>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="comments-list">
+                            {% for comment in comments %}
+                            <div class="comment-card premium-shadow">
+                                <div class="comment-header">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle small me-2">{{ comment.user.username|first|upper }}</div>
+                                        <span class="author-name text-dark">{{ comment.user.username }}</span>
+                                    </div>
+                                    <span class="comment-date text-muted"><i class="far fa-clock me-1"></i>{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+                                </div>
+                                <div class="comment-body">
+                                    {{ comment.text|linebreaksbr }}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="empty-state premium-shadow">
+                                <i class="far fa-comments"></i>
+                                <p class="fw-bold">Ще ніхто не коментував. Будьте першим!</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<script>
+    Fancybox.bind("[data-fancybox]", {});
+</script>
+
+<style>
+    /* === ОСНОВНІ ЗМІННІ (СВІТЛІ) === */
+    :root {
+        --gold: #fccb1a;
+        --gold-dark: #cfa12b;
+        --bg-light: #f5f6f8;
+        --card-bg: #ffffff;
+        --text-dark: #1a1a1a;
+        --text-gray: #6c757d;
+        --border-color: #eaeaea;
+    }
+
+    /* Утиліти */
+    .text-gold-dark { color: var(--gold-dark) !important; }
+    .bg-gold { background-color: var(--gold) !important; color: #000; }
+    .ls-1 { letter-spacing: 1px; }
+    .premium-shadow { box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
+    .border-light { border-color: var(--border-color) !important; }
+
+    .btn-gold-outline { border: 2px solid var(--gold-dark); color: var(--gold-dark); transition: 0.3s; }
+    .btn-gold-outline:hover { background: var(--gold-dark); color: #fff; }
+
+    /* === ГЕРОЙ (ОБКЛАДИНКА) === */
+    .article-hero { position: relative; height: 75vh; background: #eef0f3; display: flex; align-items: flex-end; padding-bottom: 80px; overflow: hidden; }
+    .hero-img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0.8; }
+
+    /* СВІТЛИЙ ГРАДІЄНТ: Знизу він білий, щоб плавно перейти в контент */
+    .hero-gradient-light {
+        position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+        background: linear-gradient(to top, var(--bg-light) 0%, rgba(245,246,248,0.8) 40%, transparent 100%); z-index: 1;
+    }
+    .hero-content { position: relative; z-index: 2; }
+
+    .article-title {
+        font-size: 3.5rem; font-weight: 900; text-transform: uppercase; line-height: 1.1;
+        color: var(--text-dark); text-shadow: 0 5px 15px rgba(255,255,255,0.8);
+    }
+    .badge-custom { padding: 6px 14px; font-weight: 900; font-size: 0.85rem; border-radius: 4px; display: inline-block; margin-right: 15px; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(252, 203, 26, 0.3); }
+    .date-text { color: var(--text-dark); font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.7); backdrop-filter: blur(5px); padding: 5px 15px; border-radius: 50px; }
+
+    /* === ТІЛО СТАТТІ === */
+    .article-body-wrapper { background: var(--bg-light); min-height: 500px; padding-bottom: 60px; position: relative; z-index: 3; }
+
+    /* "Аркуш" для тексту */
+    .article-paper {
+        margin-top: -60px; background: var(--card-bg); padding: 50px;
+        border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
+    }
+
+    .back-link { display: inline-flex; align-items: center; color: var(--text-gray); text-decoration: none; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; transition: 0.3s; }
+    .back-link:hover { color: var(--gold-dark); transform: translateX(-5px); }
+
+    /* ТЕКСТ СТАТТІ (ОПТИМІЗОВАНО ДЛЯ СВІТЛОГО ФОНУ) */
+    .article-content { font-size: 1.15rem; line-height: 1.8; color: #333; font-weight: 400; }
+
+    /* Буквиця (велика перша літера) */
+    .article-content > p:first-of-type::first-letter {
+        float: left; font-size: 4rem; line-height: 0.8; font-weight: 900; color: var(--gold-dark); margin-right: 15px; margin-top: 8px; text-shadow: 2px 2px 0px rgba(207, 161, 43, 0.2);
+    }
+    .article-content p { margin-bottom: 1.5rem; }
+
+    /* Жирний текст у світлій темі */
+    .article-content b,
+    .article-content strong { font-weight: 900 !important; color: #000 !important; }
+
+    /* Курсив */
+    .article-content i,
+    .article-content em { font-style: italic; color: #666; }
+
+    /* Посилання */
+    .article-content a { color: var(--gold-dark); text-decoration: underline; font-weight: 700; transition: 0.3s; }
+    .article-content a:hover { color: #000; }
+
+    /* Списки */
+    .article-content ul, .article-content ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+    .article-content li { margin-bottom: 0.5rem; }
+
+    /* === СОЦМЕРЕЖІ (ПОДІЛИТИСЯ) === */
+    .share-label { font-size: 0.95rem; }
+    .social-btn { width: 45px; height: 45px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #f0f2f5; color: #555; margin-left: 10px; transition: 0.3s; border: 1px solid var(--border-color); font-size: 1.1rem; }
+    .social-btn:hover { transform: translateY(-3px); color: #fff; border-color: transparent; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .social-btn.telegram:hover { background: #0088cc; }
+    .social-btn.facebook:hover { background: #3b5998; }
+    .social-btn.instagram:hover { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+
+    /* === ГАЛЕРЕЯ (СІТКА) === */
+    .section-title { font-size: 1.5rem; color: var(--text-dark); text-transform: uppercase; font-weight: 900; margin-bottom: 25px; border-left: 5px solid var(--gold); padding-left: 15px; letter-spacing: 1px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+    .gallery-item { position: relative; aspect-ratio: 4/3; overflow: hidden; border-radius: 16px; background: #eee; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+    .gallery-item:hover img { transform: scale(1.1); }
+    .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; color: var(--gold-dark); font-size: 2rem; backdrop-filter: blur(2px); }
+    .gallery-item:hover .overlay { opacity: 1; }
+
+    /* === КОМЕНТАРІ === */
+    .comment-form-box { background: var(--card-bg); border-radius: 20px; }
+    .avatar-circle { width: 48px; height: 48px; background: var(--gold); color: #000; font-weight: 900; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(252, 203, 26, 0.3); }
+    .avatar-circle.small { width: 40px; height: 40px; font-size: 1rem; }
+
+    .input-group-custom { position: relative; }
+    .input-group-custom textarea {
+        width: 100%; background: #f8f9fa; border: 1px solid var(--border-color); color: var(--text-dark);
+        padding: 15px 60px 15px 20px; font-weight: 500;
+        border-radius: 16px; resize: none; outline: none; transition: 0.3s; font-size: 0.95rem;
+    }
+    .input-group-custom textarea:focus { border-color: var(--gold); background: #fff; box-shadow: 0 0 0 4px rgba(252, 203, 26, 0.1); }
+
+    .send-btn {
+        position: absolute; bottom: 10px; right: 10px; background: var(--gold); border: none;
+        width: 42px; height: 42px; border-radius: 50%; color: #000; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(252, 203, 26, 0.3);
+    }
+    .send-btn:hover { transform: scale(1.1) rotate(10deg); background: #cfa12b; color: #fff; }
+
+    .comment-card { background: #ffffff; padding: 25px; border-radius: 20px; margin-bottom: 20px; transition: 0.3s; position: relative; overflow: hidden; }
+    .comment-card::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--gold); opacity: 0; transition: 0.3s; }
+    .comment-card:hover { transform: translateX(5px); }
+    .comment-card:hover::before { opacity: 1; }
+
+    .comment-header { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
+    .author-name { font-weight: 800; font-size: 1.05rem; letter-spacing: 0.5px; }
+    .comment-date { font-size: 0.8rem; font-weight: 600; }
+    .comment-body { color: #444; font-size: 0.95rem; line-height: 1.6; font-weight: 500; }
+
+    .empty-state { text-align: center; padding: 50px; color: #666; background: #ffffff; border-radius: 20px; }
+    .empty-state i { font-size: 3.5rem; margin-bottom: 15px; opacity: 0.3; color: var(--gold-dark); }
+    .empty-state p { font-size: 1.1rem; margin: 0; }
+
+    /* Адаптив */
+    @media (max-width: 768px) {
+        .article-title { font-size: 2.2rem; }
+        .article-hero { height: 60vh; }
+        .article-content > p:first-of-type::first-letter { font-size: 3rem; margin-right: 10px; }
+        .article-paper { margin-top: -30px; padding: 30px 20px; border-radius: 20px; }
+        .share-block { flex-direction: column; gap: 15px; align-items: flex-start; }
+        .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+        .comment-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+</style>
+
+{% endblock %}

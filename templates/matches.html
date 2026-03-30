@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="matches-page-light-bg">
+    <div class="container position-relative z-2">
+
+        <div class="text-center mb-5" data-aos="fade-down">
+            <h5 class="text-muted text-uppercase ls-2 small fw-bold mb-2">Розклад та статистика</h5>
+            <h1 class="text-dark fw-900 text-uppercase display-4 section-title">
+                Календар <span class="text-gold-dark">Ігор</span>
+            </h1>
+            <div class="divider mx-auto mt-3"></div>
+        </div>
+
+        <div class="row justify-content-center mobile-scroll-container mb-5 pb-3">
+            {% for match in upcoming_matches %}
+            <div class="col-lg-4 col-md-6 mobile-scroll-item" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                <a href="{% url 'match_detail' match.id %}" class="match-card-link">
+                    <div class="light-match-card">
+                        <div class="card-league-badge">{{ match.league }}</div>
+
+                        <div class="match-teams-grid">
+                            <div class="team-unit">
+                                <div class="team-logo-clean">
+                                    {% if match.home_logo %}
+                                        <img src="{{ match.home_logo.url }}" alt="{{ match.home_team }}" style="width: {{ match.home_logo_width }}px !important; height: auto !important; max-width: 100%; max-height: 100%; object-fit: contain;">
+                                    {% else %}
+                                        <img src="https://ui-avatars.com/api/?name={{ match.home_team }}&background=f4f4f4&color=111&size=100">
+                                    {% endif %}
+                                </div>
+                                <div class="team-name">{{ match.home_team }}</div>
+                            </div>
+
+                            <div class="match-time-center">
+                                <div class="time-big">{{ match.date|date:"H:i" }}</div>
+                                <div class="date-small">{{ match.date|date:"d.m.Y" }}</div>
+                            </div>
+
+                            <div class="team-unit">
+                                <div class="team-logo-clean">
+                                    {% if match.away_logo %}
+                                        <img src="{{ match.away_logo.url }}" alt="{{ match.away_team }}" style="width: {{ match.away_logo_width }}px !important; height: auto !important; max-width: 100%; max-height: 100%; object-fit: contain;">
+                                    {% else %}
+                                        <img src="https://ui-avatars.com/api/?name={{ match.away_team }}&background=f4f4f4&color=111&size=100">
+                                    {% endif %}
+                                </div>
+                                <div class="team-name">{{ match.away_team }}</div>
+                            </div>
+                        </div>
+
+                        <div class="stadium-footer">
+                            <i class="fas fa-map-marker-alt text-gold-dark me-2"></i>{{ match.stadium }}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="empty-light-card">
+                    <i class="far fa-calendar-times mb-3 opacity-50 fa-3x text-gold-dark"></i>
+                    <h4 class="fw-bold text-dark">Очікуємо на розклад</h4>
+                    <p class="text-muted mb-0">Майбутні матчі ще не заплановані.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="row g-4 mt-2">
+
+            <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="h5 text-dark fw-900 text-uppercase m-0 d-none d-sm-block">
+                        <i class="fas fa-trophy text-gold-dark me-2"></i> Турнірна таблиця
+                    </h3>
+                    <div class="league-tabs">
+                        <button class="league-tab-btn active" id="btn-super" onclick="switchLeague('super')">Суперліга</button>
+                        <button class="league-tab-btn" id="btn-first" onclick="switchLeague('first')">Перша Ліга</button>
+                    </div>
+                </div>
+
+                <div id="super-league-box" class="light-table-wrapper animate-fade">
+                    <div class="table-responsive">
+                        <table class="light-premium-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th style="text-align: left;">Команда</th>
+                                    <th width="8%">І</th>
+                                    <th width="8%">В</th>
+                                    <th width="8%">Н</th>
+                                    <th width="8%">П</th>
+                                    <th width="12%" class="text-gold-dark fw-bold">О</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for team in super_league %}
+                                <tr>
+                                    <td class="text-muted fw-bold">{{ forloop.counter }}</td>
+                                    <td class="team-cell">
+                                        {% if team.team_logo %}
+                                            <img src="{{ team.team_logo.url }}" alt="logo" style="width: {{ team.logo_width }}px !important; height: auto !important; max-width: 100%; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+                                        {% else %}
+                                            <div class="tbl-logo-placeholder"></div>
+                                        {% endif %}
+                                        <span class="desktop-name fw-bold">{{ team.team_name }}</span>
+                                    </td>
+                                    <td>{{ team.games_played }}</td>
+                                    <td class="text-success fw-bold">{{ team.wins }}</td>
+                                    <td class="text-muted">{{ team.draws }}</td>
+                                    <td class="text-danger fw-bold">{{ team.losses }}</td>
+                                    <td class="text-gold-dark fw-900 fs-5">{{ team.points }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="7" class="text-center py-4 text-muted">Таблиця формується</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="first-league-box" class="light-table-wrapper animate-fade" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="light-premium-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th style="text-align: left;">Команда</th>
+                                    <th width="8%">І</th>
+                                    <th width="8%">В</th>
+                                    <th width="8%">Н</th>
+                                    <th width="8%">П</th>
+                                    <th width="12%" class="text-gold-dark fw-bold">О</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for team in first_league %}
+                                <tr>
+                                    <td class="text-muted fw-bold">{{ forloop.counter }}</td>
+                                    <td class="team-cell">
+                                        {% if team.team_logo %}
+                                            <img src="{{ team.team_logo.url }}" alt="logo" style="width: {{ team.logo_width }}px !important; height: auto !important; max-width: 100%; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+                                        {% else %}
+                                            <div class="tbl-logo-placeholder"></div>
+                                        {% endif %}
+                                        <span class="desktop-name fw-bold">{{ team.team_name }}</span>
+                                    </td>
+                                    <td>{{ team.games_played }}</td>
+                                    <td class="text-success fw-bold">{{ team.wins }}</td>
+                                    <td class="text-muted">{{ team.draws }}</td>
+                                    <td class="text-danger fw-bold">{{ team.losses }}</td>
+                                    <td class="text-gold-dark fw-900 fs-5">{{ team.points }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="7" class="text-center py-4 text-muted">Таблиця формується</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5" data-aos="fade-up" data-aos-delay="200">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="h5 text-dark fw-900 text-uppercase m-0">
+                        <i class="fas fa-history text-gold-dark me-2"></i> Минулі ігри
+                    </h3>
+                </div>
+
+                <div class="light-history-wrapper">
+                    {% for res in finished_matches %}
+                    <a href="{% url 'match_detail' res.id %}" class="history-match-item">
+                        <div class="hist-date-col">
+                            <span class="d-block text-gold-dark fw-bold">{{ res.date|date:"d.m" }}</span>
+                            <span class="d-block text-muted small">{{ res.date|date:"H:i" }}</span>
+                        </div>
+
+                        <div class="hist-teams-col">
+                            <div class="h-team text-end">
+                                {% if res.home_logo %}
+                                    <img src="{{ res.home_logo.url }}" alt="logo" class="history-team-logo">
+                                {% else %}
+                                    <img src="https://ui-avatars.com/api/?name={{ res.home_team }}&background=f4f4f4&color=111&size=60" class="history-team-avatar">
+                                {% endif %}
+                            </div>
+
+                            <div class="h-score {% if res.home_score > res.away_score and res.home_team == 'Покрова АМП' %}win{% elif res.away_score > res.home_score and res.away_team == 'Покрова АМП' %}win{% elif res.home_score == res.away_score %}draw{% else %}loss{% endif %}">
+                                {{ res.home_score }}:{{ res.away_score }}
+                            </div>
+
+                            <div class="h-team text-start">
+                                {% if res.away_logo %}
+                                    <img src="{{ res.away_logo.url }}" alt="logo" class="history-team-logo">
+                                {% else %}
+                                    <img src="https://ui-avatars.com/api/?name={{ res.away_team }}&background=f4f4f4&color=111&size=60" class="history-team-avatar">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <div class="text-center text-muted py-5">Історія матчів порожня</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchLeague(league) {
+        const superBox = document.getElementById('super-league-box');
+        const firstBox = document.getElementById('first-league-box');
+        const btnSuper = document.getElementById('btn-super');
+        const btnFirst = document.getElementById('btn-first');
+
+        if (league === 'super') {
+            superBox.style.display = 'block';
+            firstBox.style.display = 'none';
+            btnSuper.classList.add('active');
+            btnFirst.classList.remove('active');
+        } else {
+            superBox.style.display = 'none';
+            firstBox.style.display = 'block';
+            btnSuper.classList.remove('active');
+            btnFirst.classList.add('active');
+        }
+    }
+</script>
+
+<style>
+    /* === ОСНОВА === */
+    :root {
+        --gold: #fccb1a;
+        --gold-dark: #cfa12b;
+        --bg-light: #f5f6f8;
+        --card-bg: #ffffff;
+        --border-light: #eaeaea;
+        --text-dark: #1a1a1a;
+    }
+
+    .matches-page-light-bg { background-color: var(--bg-light); min-height: 100vh; padding-top: 140px; padding-bottom: 100px; position: relative; overflow-x: hidden; color: var(--text-dark); }
+    .text-gold-dark { color: var(--gold-dark) !important; }
+    .divider { height: 4px; width: 60px; background: var(--gold); border-radius: 2px; }
+
+    /* === КАРТКИ НАСТУПНИХ МАТЧІВ === */
+    .match-card-link { text-decoration: none; display: block; height: 100%; }
+    .light-match-card {
+        background: var(--card-bg); border: 1px solid var(--border-light);
+        border-radius: 20px; padding: 30px 20px 20px; display: flex; flex-direction: column; justify-content: center;
+        min-height: 220px; transition: 0.4s; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    }
+    .light-match-card:hover { transform: translateY(-10px); border-color: var(--gold); box-shadow: 0 15px 35px rgba(252, 203, 26, 0.15); }
+
+    .card-league-badge { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; padding: 4px 20px; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; border-radius: 0 0 10px 10px; letter-spacing: 1px; }
+
+    .match-teams-grid { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+    .team-unit { width: 35%; display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+    .team-logo-clean { width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; }
+    .team-logo-clean img { transition: transform 0.3s; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+    .light-match-card:hover .team-logo-clean img { transform: scale(1.1); filter: drop-shadow(0 8px 15px rgba(0,0,0,0.15)); }
+
+    .team-name { font-size: 0.85rem; font-weight: 800; line-height: 1.2; text-transform: uppercase; color: var(--text-dark); }
+
+    .match-time-center { flex: 1; text-align: center; }
+    .time-big { font-size: 2.2rem; font-weight: 900; color: var(--gold-dark); line-height: 1; text-shadow: 0 2px 10px rgba(207, 161, 43, 0.2); }
+    .date-small { font-size: 0.85rem; color: #666; font-weight: 700; margin-top: 5px; text-transform: uppercase; }
+
+    .stadium-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid var(--border-light); font-size: 0.8rem; color: #666; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+
+    .empty-light-card { background: #fff; border: 1px dashed #ccc; border-radius: 20px; padding: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+
+    /* === ПЕРЕМИКАЧ ЛІГ === */
+    .league-tabs { display: flex; background: #eef0f3; padding: 5px; border-radius: 50px; border: 1px solid #e0e0e0; width: fit-content; }
+    .league-tab-btn { background: transparent; border: none; color: #666; padding: 8px 25px; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; border-radius: 50px; transition: 0.3s; outline: none; }
+    .league-tab-btn:hover { color: #111; }
+    .league-tab-btn.active { background: var(--gold); color: #000; box-shadow: 0 5px 15px rgba(252, 203, 26, 0.3); }
+
+    /* === ТУРНІРНА ТАБЛИЦЯ === */
+    .light-table-wrapper { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+    .light-premium-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+    .light-premium-table th { color: #888; font-size: 0.75rem; text-transform: uppercase; font-weight: 800; padding: 0 10px 10px 10px; border-bottom: 2px solid #f0f0f0; text-align: center; }
+    .light-premium-table td { padding: 12px 10px; text-align: center; background: #fcfcfc; vertical-align: middle; border-bottom: 1px solid #eee; border-top: 1px solid #eee; color: #333; }
+
+    .light-premium-table td:first-child { border-radius: 10px 0 0 10px; border-left: 1px solid #eee; }
+    .light-premium-table td:last-child { border-radius: 0 10px 10px 0; border-right: 1px solid #eee; }
+
+    .team-cell { text-align: left !important; display: flex; align-items: center; gap: 15px; border: none !important; }
+    .tbl-logo-placeholder { width: 30px; height: 30px; background: #eee; border-radius: 50%; }
+
+    /* === МИНУЛІ ІГРИ (ІСТОРІЯ) ТА ГНУЧКІ ЛОГОТИПИ === */
+    .light-history-wrapper { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+    .history-match-item { display: flex; align-items: center; text-decoration: none; background: #fafafa; border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 10px; transition: 0.3s; }
+    .history-match-item:hover { background: #fff; border-color: var(--gold); transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+
+    .hist-date-col { width: 60px; text-align: center; border-right: 1px solid #eee; padding-right: 15px; margin-right: 15px; }
+    .hist-teams-col { flex: 1; display: flex; align-items: center; justify-content: space-between; }
+
+    .h-team { display: flex; align-items: center; flex: 1; }
+    .h-team.text-end { justify-content: flex-end; }
+    .h-team.text-start { justify-content: flex-start; }
+
+    .h-score { padding: 4px 12px; border-radius: 8px; font-weight: 900; font-size: 1rem; margin: 0 15px; color: #fff; flex-shrink: 0; }
+    .h-score.win { background: #28a745; }
+    .h-score.loss { background: #dc3545; }
+    .h-score.draw { background: #ffc107; color: #000; }
+
+    /* НОВІ КЛАСИ ДЛЯ ЛОГОТИПІВ МИНУЛИХ ІГОР */
+    .history-team-logo { width: 100%; max-width: 70px; height: auto; max-height: 70px; object-fit: contain; }
+    .history-team-avatar { border-radius: 50%; width: 60px; height: 60px; }
+
+    .animate-fade { animation: fadeIn 0.4s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* === МОБІЛЬНА АДАПТАЦІЯ === */
+    @media (max-width: 991px) {
+        .mobile-scroll-container { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; margin-right: -12px; flex-wrap: nowrap; scroll-snap-type: x mandatory; justify-content: center; }
+        .mobile-scroll-item { flex: 0 0 85%; max-width: 85%; scroll-snap-align: center; }
+        .mobile-scroll-container::-webkit-scrollbar { display: none; }
+
+        .team-logo-clean { width: 80px; height: 80px; }
+        .desktop-name { display: none; }
+        .team-cell { justify-content: center; }
+
+        .league-tabs { width: 100%; display: flex; justify-content: center; margin-bottom: 20px; }
+        .light-table-wrapper { padding: 15px 10px; }
+        .light-premium-table td { padding: 10px 5px; font-size: 0.85rem; }
+
+        /* ЗМЕНШЕННЯ ЛОГОТИПІВ НА МОБІЛЬНОМУ */
+        .history-team-logo { max-width: 45px; max-height: 45px; }
+        .history-team-avatar { width: 45px; height: 45px; }
+        .h-score { margin: 0 8px; font-size: 0.9rem; padding: 4px 8px; }
+        .hist-date-col { width: 45px; padding-right: 10px; margin-right: 10px; font-size: 0.85rem; }
+    }
+</style>
+{% endblock %}

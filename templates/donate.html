@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="donate-page-light">
+
+    <div class="donate-header-light">
+        <div class="header-img-wrapper">
+            <img src="{% static 'about-bg.jpg' %}" alt="Покрова АМП" class="header-bg-img">
+            <div class="header-mask-light"></div>
+        </div>
+        <div class="container position-relative z-3 text-center pt-5">
+            <h1 class="display-3 fw-900 text-uppercase text-dark mb-2" data-aos="fade-up">
+                ПІДТРИМКА <span class="text-gold-dark">КЛУБУ</span>
+            </h1>
+            <p class="text-muted fw-bold mx-auto lead" style="max-width: 650px;" data-aos="fade-up" data-aos-delay="100">
+                Ваші внески допомагають першій ампфутбольній команді України ставати сильнішою.
+            </p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <div class="row g-4 justify-content-center mt-n5-custom position-relative z-3">
+
+            <div class="col-lg-6" data-aos="zoom-in">
+                <div class="support-card-main premium-shadow">
+                    <div class="badge-quick">Швидкий донат</div>
+
+                    <div class="text-center py-2">
+                        <div class="monobank-logo-container mb-4">
+                            <img src="{% static 'monobank-logo.png' %}" alt="Monobank" class="img-fluid rounded-4 shadow-sm border border-light">
+                        </div>
+
+                        <h2 class="text-dark fw-900 mb-3">ДОНАТ ЧЕРЕЗ MONOBANK</h2>
+                        <p class="text-muted fw-bold mb-4 px-md-5">Натисніть на кнопку нижче, щоб перейти на офіційну сторінку збору команди.</p>
+
+                        <a href="https://bank.gov.ua/qr/QkNECjAwMgoxClVDVAoK0JPQniAi0KTQmiAi0J_QvtC60YDQvtCy0LAg0JDQnNCfIgpVQTUyMzIyMDAxMDAwMDAyNjAwNDcwMDAxMTgzOQoKNDUzOTE4MjEKCgoKCg" target="_blank" class="btn-mono-light">
+                            ПЕРЕКАЗАТИ В БАНКУ
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5" data-aos="fade-left">
+                <div class="support-card-iban h-100 premium-shadow">
+                    <h4 class="text-dark fw-900 mb-4 border-bottom pb-3 text-uppercase small ls-1" style="border-color: #eaeaea !important;">Банківський переказ</h4>
+
+                    <div class="iban-info-list">
+                        <div class="copy-group mb-3">
+                            <label>Отримувач</label>
+                            <div class="copy-field-light">
+                                <span id="targetName" class="fw-bold">ГО "ФК Покрова АМП"</span>
+                                <button type="button" onclick="copyToClipboard('targetName', this)" title="Копіювати"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <div class="copy-group mb-3">
+                            <label>IBAN (UA)</label>
+                            <div class="copy-field-light gold-border">
+                                <span id="targetIban" class="text-gold-dark fw-900">UA523220010000026004700011839</span>
+                                <button type="button" onclick="copyToClipboard('targetIban', this)" title="Копіювати"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <div class="copy-group mb-3">
+                            <label>ЄДРПОУ (Код)</label>
+                            <div class="copy-field-light">
+                                <span id="targetEdrpou" class="fw-bold">45391821</span>
+                                <button type="button" onclick="copyToClipboard('targetEdrpou', this)" title="Копіювати"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <div class="copy-group">
+                            <label>Призначення платежу</label>
+                            <div class="copy-field-light">
+                                <span id="targetPurpose" class="fw-bold" style="font-size: 0.8rem; line-height: 1.4; word-wrap: break-word; flex: 1; padding-right: 15px; font-family: inherit;">Добровільна благодійна пожертва на статутну діяльність, без ПДВ</span>
+                                <button type="button" class="flex-shrink-0" onclick="copyToClipboard('targetPurpose', this)" title="Копіювати"><i class="far fa-copy"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 small fw-bold" style="color: #888; line-height: 1.4;">
+                        <i class="fas fa-info-circle me-1 text-gold-dark"></i>
+                        Натисніть на іконку, щоб скопіювати реквізит для оплати в банківському додатку.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="copyNotice" class="copy-popup-light shadow-lg">
+    <i class="fas fa-check-circle me-2"></i> Скопійовано!
+</div>
+
+<style>
+    /* === ОСНОВНІ ЗМІННІ (СВІТЛІ) === */
+    :root {
+        --bg-light: #f5f6f8;
+        --card-bg: #ffffff;
+        --club-gold: #fccb1a;
+        --gold-dark: #cfa12b;
+        --border-light: #eaeaea;
+        --text-dark: #1a1a1a;
+    }
+
+    .text-gold-dark { color: var(--gold-dark) !important; }
+    .premium-shadow { box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid var(--border-light); }
+
+    /* ФІКС ОБРІЗАННЯ: overflow-x: clip замість hidden */
+    .donate-page-light { background: var(--bg-light); min-height: 100vh; color: var(--text-dark); overflow-x: clip; padding-bottom: 50px; }
+
+    /* === HERO === */
+    .donate-header-light { position: relative; height: 420px; display: flex; align-items: center; justify-content: center; }
+    .header-img-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    .header-bg-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.3; filter: grayscale(50%); }
+    .header-mask-light {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(245,246,248,0.2) 0%, var(--bg-light) 100%);
+    }
+
+    .mt-n5-custom { margin-top: -100px !important; }
+
+    /* === КАРТКИ === */
+    .support-card-main {
+        background: var(--card-bg); border-radius: 30px; padding: 40px;
+        position: relative; transition: 0.4s ease;
+    }
+    .support-card-iban { background: var(--card-bg); border-radius: 30px; padding: 35px; transition: 0.4s ease; }
+
+    .support-card-main:hover, .support-card-iban:hover { box-shadow: 0 15px 40px rgba(0,0,0,0.08); transform: translateY(-5px); border-color: rgba(252, 203, 26, 0.4); }
+
+    .badge-quick {
+        position: absolute; top: 20px; left: 20px; background: var(--club-gold);
+        color: #000; font-weight: 900; font-size: 0.65rem; padding: 5px 15px;
+        border-radius: 50px; text-transform: uppercase; box-shadow: 0 4px 10px rgba(252, 203, 26, 0.3);
+    }
+
+    .monobank-logo-container { width: 110px; height: 110px; margin: 0 auto; }
+    .monobank-logo-container img { width: 100%; height: 100%; object-fit: contain; background: #fff; padding: 5px; }
+
+    /* КНОПКА МОНОБАНК */
+    .btn-mono-light {
+        display: block; background: var(--club-gold); color: #000; text-decoration: none;
+        padding: 18px; border-radius: 15px; font-weight: 900; transition: 0.3s;
+        text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(252, 203, 26, 0.3);
+    }
+    .btn-mono-light:hover { background: #111; transform: translateY(-3px); color: var(--club-gold); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+
+    /* РЕКВІЗИТИ (Світлі інпути) */
+    .copy-group label { display: block; font-size: 0.75rem; color: #888; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; }
+    .copy-field-light {
+        background: #f8f9fb; border: 1px solid var(--border-light); padding: 12px 20px; border-radius: 12px;
+        display: flex; justify-content: space-between; align-items: center; transition: 0.3s;
+    }
+    .copy-field-light:hover { border-color: #ccc; background: #fff; }
+    .copy-field-light span { font-size: 0.95rem; color: var(--text-dark); font-family: 'Courier New', monospace; letter-spacing: 0.5px; }
+
+    .gold-border { border-color: rgba(252, 203, 26, 0.5); background: #fffcf0; }
+
+    .copy-field-light button { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; color: #666; transition: 0.3s; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .copy-field-light button:hover { background: var(--club-gold); color: #000; border-color: var(--club-gold); transform: scale(1.05); }
+
+    /* Допоміжний клас для кнопок, щоб вони не зжималися */
+    .flex-shrink-0 { flex-shrink: 0 !important; }
+
+    /* === ПОПАП (СКОПІЙОВАНО) === */
+    .copy-popup-light {
+        position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+        background: #fff; border: 2px solid var(--club-gold); color: var(--text-dark);
+        padding: 12px 30px; border-radius: 50px; font-weight: 800;
+        opacity: 0; transition: 0.3s; z-index: 10000; pointer-events: none;
+        display: flex; align-items: center;
+    }
+    .copy-popup-light.active { opacity: 1; bottom: 60px; }
+
+    @media (max-width: 768px) {
+        .donate-header-light { height: 350px; }
+        .mt-n5-custom { margin-top: -60px !important; }
+        .support-card-main, .support-card-iban { padding: 30px 20px; }
+        .display-3 { font-size: 2.5rem; }
+    }
+</style>
+
+<script>
+    function copyToClipboard(id, btn) {
+        const text = document.getElementById(id).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const notice = document.getElementById('copyNotice');
+            notice.classList.add('active');
+            const icon = btn.querySelector('i');
+            icon.className = 'fas fa-check text-success';
+            btn.style.borderColor = '#28a745';
+            btn.style.color = '#28a745';
+
+            setTimeout(() => {
+                notice.classList.remove('active');
+                icon.className = 'far fa-copy';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+            }, 2000);
+        });
+    }
+</script>
+{% endblock %}

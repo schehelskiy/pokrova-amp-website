@@ -1,0 +1,168 @@
+<div class="table-responsive custom-scrollbar mt-0 p-2 p-md-3" style="background-color: #1a1a1a; border-radius: 15px; border: 1px solid #333;">
+    <table class="table table-hover align-middle tournament-table mb-0">
+        <thead>
+            <tr>
+                <th scope="col" class="text-center rank-col ps-3 mobile-hide-col">#</th>
+
+                <th scope="col" class="team-col ps-1">КЛУБ</th>
+                <th scope="col" class="text-center stat-col px-1">І</th>
+                <th scope="col" class="text-center stat-col px-1">В</th>
+                <th scope="col" class="text-center stat-col px-1">Н</th>
+                <th scope="col" class="text-center stat-col px-1">П</th>
+                <th scope="col" class="text-center points-col px-1">О</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for team in table_stats %}
+                {% if team.league == league_type %}
+                <tr class="{% if team.is_our_team %}our-team-row{% endif %}">
+
+                    <td class="text-center fw-bold rank-cell ps-3 mobile-hide-col"></td>
+
+                    <td class="team-cell ps-1">
+                        <div class="d-flex align-items-center team-wrapper">
+                            {% if team.team_logo %}
+                                <img src="{{ team.team_logo.url }}" alt="{{ team.team_name }}" class="team-logo-mini me-1 me-md-2">
+                            {% else %}
+                                <i class="fas fa-shield-alt text-secondary me-1 me-md-2 fs-6"></i>
+                            {% endif %}
+
+                            <span class="team-name text-uppercase text-truncate">{{ team.team_name }}</span>
+
+                            {% if team.is_our_team %}
+                                <span class="badge bg-warning text-dark ms-1 py-0 px-1 fw-bold desktop-badge">МИ</span>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <td class="text-center fw-bold px-1">{{ team.games_played }}</td>
+                    <td class="text-center px-1">{{ team.wins }}</td>
+                    <td class="text-center px-1">{{ team.draws }}</td>
+                    <td class="text-center px-1">{{ team.losses }}</td>
+
+                    <td class="text-center points-cell px-1">{{ team.points }}</td>
+                </tr>
+                {% endif %}
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted" style="background-color: #1a1a1a !important; color: #888 !important;">
+                        Дані таблиці ще не додано.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    /* === 📱 МОБІЛЬНА ОПТИМІЗАЦІЯ (ГОЛОВНЕ) === */
+
+    @media (max-width: 576px) {
+        /* 1. ХОВАЄМО СТОВПЧИК З МІСЦЕМ (#) */
+        .mobile-hide-col {
+            display: none !important;
+        }
+
+        /* 2. ЗМЕНШУЄМО ШРИФТИ */
+        .tournament-table { font-size: 0.75rem !important; } /* 12px */
+        .team-name { font-size: 0.7rem !important; }
+        .points-cell { font-size: 0.85rem !important; }
+
+        /* 3. ЗМЕНШУЄМО ЛОГОТИП */
+        .team-logo-mini {
+            width: 20px !important;
+            height: 20px !important;
+        }
+
+        /* 4. СТИСКАЄМО ВІДСТУПИ */
+        .tournament-table tbody tr td,
+        .tournament-table thead th {
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
+            /* Мінімальні бокові відступи для цифр */
+        }
+
+        /* 5. ОБМЕЖУЄМО ШИРИНУ НАЗВИ КОМАНДИ, ЩОБ НЕ РОЗТЯГУВАЛА ЕКРАН */
+        .team-name {
+            max-width: 90px; /* Якщо назва довга, буде три крапки... */
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Ховаємо напис "МИ" на телефоні, залишаємо підсвітку рядка */
+        .desktop-badge { display: none; }
+    }
+
+
+    /* === СТАНДАРТНІ СТИЛІ (ПК) === */
+
+    /* Нумерація місць через CSS */
+    .tournament-table tbody { counter-reset: league-rank; }
+    .rank-cell::before {
+        counter-increment: league-rank;
+        content: counter(league-rank);
+        color: #666;
+    }
+    /* Корона для 1 місця */
+    .tournament-table tbody tr:first-child .rank-cell::before {
+        content: "\f521" !important;
+        font-family: "Font Awesome 6 Free" !important;
+        font-weight: 900;
+        color: #fccb1a;
+    }
+
+    /* Z-Index фікс для меню */
+    .modal-backdrop { z-index: 2999 !important; }
+    .modal { z-index: 3000 !important; }
+
+    /* Темні фони (важливо!) */
+    .tournament-table tbody tr td {
+        background-color: #1a1a1a !important;
+        color: white !important;
+        border-bottom: 1px solid #333;
+        white-space: nowrap; /* Забороняємо перенос рядків у цифрах */
+    }
+
+    .tournament-table thead th {
+        background-color: #111 !important;
+        color: #888 !important;
+        border: none;
+        padding: 15px 5px;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    /* Логотип на ПК */
+    .team-logo-mini {
+        width: 32px; height: 32px;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+
+    .team-name { font-weight: 700; letter-spacing: 0.5px; font-size: 0.9rem; }
+
+    /* Ховер */
+    .tournament-table tbody tr:hover td {
+        background-color: #252525 !important;
+        color: #fccb1a !important;
+    }
+
+    /* Наша команда */
+    .our-team-row td {
+        background-color: #2a2a2a !important;
+        border-top: 1px solid rgba(252, 203, 26, 0.3);
+        border-bottom: 1px solid rgba(252, 203, 26, 0.3);
+    }
+    .our-team-row .team-name { color: #fccb1a !important; }
+
+    /* Очки */
+    .points-cell {
+        font-weight: 900;
+        font-size: 1.1rem;
+        color: #fccb1a !important;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #111; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+</style>

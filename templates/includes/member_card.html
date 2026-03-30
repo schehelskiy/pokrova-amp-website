@@ -1,0 +1,190 @@
+{% load static %}
+<div class="col">
+    <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
+        <div class="flip-card-inner">
+
+            <div class="flip-card-front">
+                {% if player.photo %}
+                    <img src="{{ player.photo.url }}" alt="{{ player.last_name }}" loading="lazy">
+                {% else %}
+                    <div class="no-photo-box"><i class="fas fa-user fa-4x opacity-25"></i></div>
+                {% endif %}
+
+                {% if player.number %}
+                    <div class="front-number-badge">
+                        {{ player.number }}
+                    </div>
+                {% endif %}
+
+                <div class="front-name-overlay">
+                    <div class="player-name-front">{{ player.last_name }}</div>
+                </div>
+            </div>
+
+            <div class="flip-card-back">
+                <div class="card-back-content">
+                    <div class="back-header">
+                        <h5 class="text-white-50 m-0 small uppercase">{{ player.first_name }}</h5>
+                        <h2 class="back-last-name">{{ player.last_name }}</h2>
+                        <span class="pos-badge">{{ player.get_position_display }}</span>
+                    </div>
+
+                    <div class="physique-row">
+                        <div class="p-col w-100 text-center">
+                            <span>ВІК</span>
+                            <b>{{ player.age }}</b>
+                        </div>
+                    </div>
+
+                    <div class="logo-box-mini">
+                        <img src="{% static 'logo.png' %}" alt="Logo" style="height: 45px; opacity: 0.15; filter: grayscale(1);">
+                    </div>
+
+                    {% if player.position in "GK DF MF FW" %}
+                        <div class="stats-footer">
+                            <div class="stat-col"><span>ІГРИ</span><div class="stat-val">{{ player.matches_played }}</div></div>
+                            <div class="stat-col"><span>ГОЛИ</span><div class="stat-val text-warning">{{ player.goals }}</div></div>
+                            <div class="stat-col"><span>АСИСТ</span><div class="stat-val">{{ player.assists }}</div></div>
+                        </div>
+
+                        <div class="mt-2">
+                            <a href="{% url 'player_detail' player.pk %}" class="btn-more-details">
+                                ДЕТАЛЬНІШЕ <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+
+                        <div class="stats-disclaimer mt-2 mb-1">
+                            * Статистика ведеться з 2026 року
+                        </div>
+                    {% else %}
+                        <div class="mt-auto mb-2">
+                             <a href="{% url 'player_detail' player.pk %}" class="btn-more-details">
+                                ПРОФІЛЬ <i class="fas fa-chevron-right ms-1"></i>
+                            </a>
+                        </div>
+                        <div class="stats-footer justify-content-center text-muted small py-2">
+                            <span>FC POKROVA AMP</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* НОВИЙ СТИЛЬ ДЛЯ КНОПКИ */
+    .btn-more-details {
+        display: inline-block;
+        width: 100%;
+        background: #fccb1a;
+        color: #000 !important;
+        text-decoration: none !important;
+        font-weight: 900;
+        font-size: 0.75rem;
+        padding: 8px 0;
+        border-radius: 6px;
+        transition: 0.3s;
+        border: 1px solid #fccb1a;
+    }
+    .btn-more-details:hover {
+        background: transparent;
+        color: #fccb1a !important;
+    }
+
+    /* ТВОЇ СТИЛІ БЕЗ ЗМІН */
+    .flip-card { height: 420px; perspective: 1000px; cursor: pointer; }
+    .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; border-radius: 15px; }
+
+    @media (hover: hover) { .flip-card:hover .flip-card-inner { transform: rotateY(180deg); } }
+    .flip-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
+
+    .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; overflow: hidden; border: 1px solid #222; }
+
+    .flip-card-front { background: #151515; }
+    .flip-card-front img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .no-photo-box { height: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a1a; color: #444; }
+
+    .front-number-badge {
+        position: absolute; top: 12px; right: 12px; font-size: 2.2rem; font-weight: 900;
+        color: #fccb1a; line-height: 1; padding: 6px 12px; border-radius: 8px;
+        background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(252, 203, 26, 0.4);
+        backdrop-filter: blur(4px); box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .front-name-overlay { position: absolute; bottom: 0; width: 100%; padding: 40px 15px 15px; background: linear-gradient(transparent, rgba(0,0,0,0.95)); }
+
+    .player-name-front {
+        color: white; font-weight: 900; font-size: 1.3rem; text-transform: uppercase;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .flip-card-back { background: #0c0c0c; color: white; transform: rotateY(180deg); padding: 25px 15px; border: 1px solid #fccb1a; }
+    .card-back-content { display: flex; flex-direction: column; height: 100%; justify-content: space-between; }
+
+    .back-last-name {
+        font-weight: 900; color: #fccb1a; text-transform: uppercase; font-size: 1.5rem;
+        margin: 0; line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .pos-badge { background: #222; font-size: 0.7rem; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-top: 8px; text-transform: uppercase; }
+
+    /* ОНОВЛЕНИЙ СТИЛЬ: для блоку віку (центрований) */
+    .physique-row { display: flex; justify-content: center; background: rgba(255,255,255,0.05); padding: 10px 0; border-radius: 10px; margin: 15px 0; }
+    .p-col span { display: block; font-size: 0.65rem; color: #888; font-weight: 700; letter-spacing: 1px;}
+    .p-col b { font-size: 1.3rem; color: white; }
+
+    .stats-footer { display: flex; border-top: 1px solid #333; padding-top: 15px; }
+    .stat-col { flex: 1; text-align: center; }
+    .stat-col span { display: block; font-size: 0.55rem; color: #666; font-weight: 700; }
+    .stat-val { font-size: 1.3rem; font-weight: 900; }
+
+    .stats-disclaimer { font-size: 0.55rem; color: #777; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+
+    @media (max-width: 768px) {
+        /* ОНОВЛЕНО: трохи збільшив висоту картки на телефоні та відкоригував відступи */
+        .flip-card { height: 370px; }
+        .front-number-badge { font-size: 1.8rem; padding: 4px 8px; }
+        .flip-card-back { padding: 15px; }
+        .stats-disclaimer { margin-bottom: 5px; }
+    }
+</style>
+
+<script>
+    if (typeof window.initRubberText === 'undefined') {
+        window.initRubberText = true;
+
+        const resizeObserver = new ResizeObserver(entries => {
+            entries.forEach(entry => {
+                const names = entry.target.querySelectorAll('.player-name-front, .back-last-name');
+
+                names.forEach(name => {
+                    if (name.clientWidth === 0) return;
+                    name.style.fontSize = '';
+                    let currentSize = parseFloat(window.getComputedStyle(name).fontSize);
+
+                    while (name.scrollWidth > name.clientWidth && currentSize > 10) {
+                        currentSize -= 0.5;
+                        name.style.fontSize = currentSize + 'px';
+                    }
+                });
+            });
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.flip-card').forEach(card => {
+                resizeObserver.observe(card);
+            });
+        });
+
+        setTimeout(() => {
+            document.querySelectorAll('.flip-card').forEach(card => resizeObserver.observe(card));
+        }, 300);
+    }
+</script>

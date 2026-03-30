@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="gallery-page-light-bg">
+    <div class="ambient-glow"></div>
+
+    <div class="container position-relative z-2" style="padding-top: 140px; padding-bottom: 80px; min-height: 80vh;">
+
+        <div class="text-center mb-5" data-aos="fade-down">
+            <h5 class="text-muted text-uppercase ls-2 small fw-bold mb-2">Наші емоції</h5>
+            <h1 class="text-dark fw-900 text-uppercase display-4 section-title">
+                <span class="text-gold-dark">Фото</span>галерея
+            </h1>
+            <div class="divider mx-auto mt-3"></div>
+            <p class="text-muted fw-bold mt-3">Найкращі моменти з життя клубу</p>
+        </div>
+
+        <div class="row g-4">
+            {% for album in albums %}
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:'1' }}00">
+                <a href="{% url 'album_detail' album.pk %}" class="album-card-link">
+                    <div class="light-premium-card">
+
+                        <div class="album-cover">
+                            {% if album.cover_image %}
+                                <img src="{{ album.cover_image.url }}" alt="{{ album.title }}">
+                            {% else %}
+                                <div class="no-photo"><i class="fas fa-camera text-muted opacity-25"></i></div>
+                            {% endif %}
+
+                            <div class="album-overlay">
+                                <span class="btn-cyber-gold px-4 py-2 small">Дивитись фото</span>
+                            </div>
+                        </div>
+
+                        <div class="album-info">
+                            <h3 class="album-title">{{ album.title }}</h3>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="album-date">
+                                    <i class="far fa-calendar-alt text-gold-dark me-1"></i> {{ album.created_at|date:"d.m.Y" }}
+                                </span>
+                                <span class="badge-photo-count">
+                                    <i class="far fa-images me-1 text-muted"></i> {{ album.photos.count }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5" data-aos="fade-up">
+                <div class="empty-light-state mx-auto" style="max-width: 500px;">
+                    <i class="fas fa-images text-gold-dark fa-4x mb-3 opacity-50"></i>
+                    <h3 class="text-dark fw-bold">Альбомів поки немає</h3>
+                    <p class="text-muted m-0">Скоро ми додамо сюди круті фотографії!</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* === ОСНОВНІ ЗМІННІ (СВІТЛІ) === */
+    :root {
+        --bg-light: #f5f6f8;
+        --card-bg: #ffffff;
+        --club-gold: #fccb1a;
+        --gold-dark: #cfa12b;
+        --border-light: #eaeaea;
+        --text-dark: #1a1a1a;
+    }
+
+    .text-gold-dark { color: var(--gold-dark) !important; }
+
+    .gallery-page-light-bg { min-height: 100vh; background-color: var(--bg-light); position: relative; overflow-x: hidden; }
+    .ambient-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 20%, rgba(252, 203, 26, 0.05), transparent 60%); pointer-events: none; z-index: 0; }
+    .divider { height: 4px; width: 60px; background: var(--club-gold); border-radius: 2px; }
+
+    .album-card-link { text-decoration: none; display: block; height: 100%; }
+
+    /* === ПРЕМІУМ КАРТКА === */
+    .light-premium-card {
+        background: var(--card-bg); border: 1px solid var(--border-light);
+        border-radius: 24px; overflow: hidden; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    .light-premium-card:hover {
+        transform: translateY(-8px); border-color: var(--club-gold);
+        box-shadow: 0 15px 40px rgba(252, 203, 26, 0.15);
+    }
+
+    /* ФОТО */
+    .album-cover { position: relative; height: 260px; overflow: hidden; background: #eef0f3; border-bottom: 1px solid var(--border-light); }
+    .album-cover img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); }
+    .light-premium-card:hover .album-cover img { transform: scale(1.08); }
+
+    /* ОВЕРЛЕЙ */
+    .album-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(26, 26, 26, 0.4); backdrop-filter: blur(2px);
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; transition: 0.4s;
+    }
+    .light-premium-card:hover .album-overlay { opacity: 1; }
+
+    .btn-cyber-gold {
+        background: var(--club-gold); color: #000; border-radius: 50px;
+        font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+        box-shadow: 0 5px 15px rgba(252, 203, 26, 0.4); transform: translateY(10px); transition: 0.4s;
+    }
+    .light-premium-card:hover .btn-cyber-gold { transform: translateY(0); }
+
+    .no-photo { height: 100%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; font-size: 4rem; }
+
+    /* ІНФО БЛОК */
+    .album-info { padding: 25px 20px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+
+    .album-title { font-size: 1.15rem; font-weight: 900; color: var(--text-dark); text-transform: uppercase; margin: 0; line-height: 1.3; transition: 0.3s; }
+    .light-premium-card:hover .album-title { color: var(--gold-dark); }
+
+    .album-date { font-size: 0.85rem; font-weight: 700; color: #666; }
+
+    .badge-photo-count {
+        background: #f8f9fa; border: 1px solid var(--border-light);
+        color: var(--text-dark); font-weight: 800; font-size: 0.8rem;
+        padding: 5px 12px; border-radius: 50px; display: inline-flex; align-items: center;
+    }
+
+    /* ПУСТИЙ СТАН */
+    .empty-light-state { background: var(--card-bg); border: 2px dashed #ddd; border-radius: 20px; padding: 50px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+
+    @media (max-width: 768px) {
+        .album-cover { height: 220px; }
+        .album-title { font-size: 1.05rem; }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --premium-gold: #c59b27;
+        --bg-light: #f8f9fb;
+        --card-bg: #ffffff;
+        --text-dark: #1a1a1a;
+        --text-muted: #6c757d;
+    }
+
+    .hall-of-fame-section {
+        background-color: var(--bg-light);
+        padding: 140px 0 100px;
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Заголовок у преміум-стилі */
+    .header-minimal {
+        text-align: center;
+        margin-bottom: 80px;
+        position: relative;
+    }
+
+    .header-minimal h1 {
+        font-size: 5rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: -2px;
+        line-height: 0.9;
+        margin-bottom: 0;
+        color: var(--text-dark);
+    }
+
+    .header-minimal .sub-gold {
+        display: block;
+        font-size: 1rem;
+        color: var(--premium-gold);
+        letter-spacing: 8px;
+        text-transform: uppercase;
+        margin-top: 15px;
+        font-weight: 800;
+    }
+
+    /* Сітка */
+    .achievements-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 40px;
+        align-items: start;
+    }
+
+    /* Світла картка досягнення */
+    .achieve-entry {
+        position: relative;
+        background: var(--card-bg);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        border: 1px solid rgba(0,0,0,0.03);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    }
+
+    .achieve-entry:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        border-color: rgba(197, 155, 39, 0.3);
+    }
+
+    /* Фото-блок */
+    .image-container {
+        position: relative;
+        width: 100%;
+        height: 380px;
+        overflow: hidden;
+        background-color: #eee;
+    }
+
+    .image-container::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+        z-index: 1;
+    }
+
+    .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.8s ease;
+    }
+
+    .achieve-entry:hover .image-container img {
+        transform: scale(1.05);
+    }
+
+    /* Рік поверх фото */
+    .entry-year {
+        position: absolute;
+        bottom: 15px;
+        left: 25px;
+        font-size: 4.5rem;
+        font-weight: 900;
+        color: rgba(255, 255, 255, 0.95);
+        line-height: 0.8;
+        z-index: 2;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        pointer-events: none;
+    }
+
+    /* Текстовий блок */
+    .entry-body {
+        padding: 35px 30px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .entry-title {
+        font-size: 1.5rem;
+        font-weight: 900;
+        margin-bottom: 20px;
+        color: var(--text-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Опис, що розгортається (ВИПРАВЛЕНО ДЛЯ ТЕЛЕФОНІВ) */
+    .entry-description {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.8s ease, opacity 0.5s ease, margin 0.5s ease, padding 0.5s ease;
+    }
+
+    .entry-description.active {
+        max-height: 2500px; /* Збільшено з 500px, щоб влазив текст будь-якої довжини */
+        opacity: 1;
+        margin-bottom: 25px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .entry-text {
+        color: var(--text-muted);
+        font-size: 1rem;
+        line-height: 1.7;
+        font-weight: 500;
+    }
+
+    /* Кнопка */
+    .btn-minimal {
+        background: transparent;
+        border: none;
+        color: var(--text-dark);
+        text-transform: uppercase;
+        font-weight: 900;
+        font-size: 0.8rem;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: 0.3s;
+    }
+
+    .btn-minimal::after {
+        content: '';
+        width: 30px;
+        height: 2px;
+        background: var(--premium-gold);
+        transition: 0.3s;
+    }
+
+    .btn-minimal:hover {
+        color: var(--premium-gold);
+    }
+
+    .btn-minimal:hover::after {
+        width: 50px;
+    }
+
+    /* Адаптивність */
+    @media (max-width: 768px) {
+        .header-minimal h1 { font-size: 3rem; }
+        .achievements-grid { grid-template-columns: 1fr; gap: 30px; }
+        .image-container { height: 320px; }
+        .entry-year { font-size: 3.5rem; }
+        .entry-body { padding: 25px 20px; } /* Трохи менші відступи по боках на телефоні, щоб текст мав більше місця */
+    }
+</style>
+
+<div class="hall-of-fame-section">
+    <div class="container">
+
+        <header class="header-minimal" data-aos="fade-down">
+            <h1>Hall of Fame</h1>
+            <span class="sub-gold">Досягнення Покрова АМП</span>
+        </header>
+
+        <div class="achievements-grid">
+            {% for item in achievements %}
+            <article class="achieve-entry" data-aos="fade-up" data-aos-delay="{{ forloop.counter }}00">
+                <div class="image-container">
+                    {% if item.image_main %}
+                        <img src="{{ item.image_main.url }}" alt="{{ item.title }}" loading="lazy">
+                    {% endif %}
+                    <div class="entry-year">{{ item.year }}</div>
+                </div>
+
+                <div class="entry-body">
+                    <h2 class="entry-title">{{ item.title }}</h2>
+
+                    <div class="entry-description" id="desc-{{ item.id }}">
+                        <p class="entry-text">{{ item.description|linebreaksbr }}</p>
+                    </div>
+
+                    <button class="btn-minimal" onclick="revealAchievement('{{ item.id }}', this)">
+                        <span>Детальніше</span>
+                    </button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function revealAchievement(id, btn) {
+    const content = document.getElementById('desc-' + id);
+    const span = btn.querySelector('span');
+
+    // Закриваємо інші відкриті картки
+    document.querySelectorAll('.entry-description.active').forEach(el => {
+        if(el.id !== 'desc-' + id) {
+            el.classList.remove('active');
+            const otherBtn = el.parentElement.querySelector('.btn-minimal span');
+            if(otherBtn) otherBtn.innerText = 'Детальніше';
+        }
+    });
+
+    content.classList.toggle('active');
+
+    if (content.classList.contains('active')) {
+        span.innerText = 'Згорнути';
+    } else {
+        span.innerText = 'Детальніше';
+    }
+}
+</script>
+{% endblock %}

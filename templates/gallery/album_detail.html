@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+
+<div class="album-detail-page-bg">
+    <div class="ambient-glow"></div>
+
+    <div class="container position-relative z-2" style="padding-top: 130px; padding-bottom: 80px; min-height: 80vh;">
+
+        <div class="mb-4" data-aos="fade-right">
+            <a href="{% url 'gallery_list' %}" class="back-link">
+                <i class="fas fa-arrow-left me-2"></i> Назад до галереї
+            </a>
+        </div>
+
+        <div class="album-header-card mb-5" data-aos="fade-up">
+            <h1 class="fw-900 text-uppercase text-dark mb-3">{{ album.title }}</h1>
+
+            <div class="d-flex align-items-center flex-wrap gap-3 mb-3">
+                <span class="info-badge">
+                    <i class="far fa-calendar-alt text-gold-dark me-2"></i>{{ album.created_at|date:"d E Y" }}
+                </span>
+                <span class="info-badge">
+                    <i class="far fa-images me-2 text-muted"></i>{{ album.photos.count }} фото
+                </span>
+            </div>
+
+            {% if album.description %}
+                <div class="album-desc mt-3 pt-3">
+                    <p class="text-muted fw-bold m-0">{{ album.description }}</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="row g-3 g-md-4">
+            {% for photo in album.photos.all %}
+            <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:'1' }}0">
+                <a href="{{ photo.image.url }}" data-fancybox="gallery" data-caption="{{ photo.caption }}">
+                    <div class="photo-item premium-shadow">
+                        <img src="{{ photo.image.url }}" alt="Photo" loading="lazy">
+
+                        <div class="photo-overlay">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5" data-aos="fade-up">
+                <div class="empty-light-state mx-auto" style="max-width: 500px;">
+                    <i class="fas fa-camera text-gold-dark fa-4x mb-3 opacity-50"></i>
+                    <h3 class="text-dark fw-bold">У цьому альбомі поки немає фото</h3>
+                    <p class="text-muted m-0">Скоро ми додамо сюди круті кадри!</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<script>
+    Fancybox.bind("[data-fancybox]", {
+        // Налаштування fancybox (анімації, зум тощо)
+        Toolbar: { display: { left: ["infobar"], middle: ["zoomIn", "zoomOut"], right: ["slideshow", "close"] } }
+    });
+</script>
+
+<style>
+    /* === ОСНОВНІ ЗМІННІ (СВІТЛІ) === */
+    :root {
+        --bg-light: #f5f6f8;
+        --card-bg: #ffffff;
+        --club-gold: #fccb1a;
+        --gold-dark: #cfa12b;
+        --border-light: #eaeaea;
+        --text-dark: #1a1a1a;
+    }
+
+    .text-gold-dark { color: var(--gold-dark) !important; }
+
+    .album-detail-page-bg { background-color: var(--bg-light); min-height: 100vh; position: relative; overflow-x: hidden; }
+    .ambient-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 20% 80%, rgba(252, 203, 26, 0.05), transparent 60%); pointer-events: none; z-index: 0; }
+
+    /* === КНОПКА НАЗАД === */
+    .back-link {
+        display: inline-flex; align-items: center; color: #6c757d;
+        font-weight: 800; text-transform: uppercase; font-size: 0.85rem;
+        text-decoration: none; transition: 0.3s;
+    }
+    .back-link:hover { color: var(--gold-dark); transform: translateX(-5px); }
+
+    /* === ЗАГОЛОВОК АЛЬБОМУ === */
+    .album-header-card {
+        background: var(--card-bg); padding: 40px; border-radius: 24px;
+        border: 1px solid var(--border-light); box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        border-left: 5px solid var(--club-gold);
+    }
+
+    .info-badge {
+        background: #f8f9fa; border: 1px solid var(--border-light);
+        padding: 8px 20px; border-radius: 50px; font-weight: 800;
+        font-size: 0.85rem; color: var(--text-dark); display: inline-flex; align-items: center;
+    }
+
+    .album-desc { border-top: 1px solid var(--border-light); line-height: 1.6; }
+
+    /* === СІТКА ФОТО === */
+    .photo-item {
+        position: relative; aspect-ratio: 1/1; /* Квадратні фото */
+        overflow: hidden; border-radius: 16px; background: #eef0f3;
+        border: 1px solid var(--border-light); cursor: pointer; transition: 0.4s;
+    }
+
+    .premium-shadow { box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+    .photo-item:hover {
+        transform: translateY(-5px); border-color: var(--club-gold);
+        box-shadow: 0 15px 35px rgba(252, 203, 26, 0.2);
+    }
+
+    .photo-item img {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        object-fit: cover; transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .photo-item:hover img { transform: scale(1.08); }
+
+    /* СВІТЛИЙ СКЛЯНИЙ ОВЕРЛЕЙ */
+    .photo-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255,255,255,0.7); backdrop-filter: blur(2px);
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; transition: 0.3s;
+    }
+    .photo-item:hover .photo-overlay { opacity: 1; }
+
+    .photo-overlay i {
+        font-size: 3rem; color: var(--gold-dark);
+        transform: scale(0.5); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .photo-item:hover .photo-overlay i { transform: scale(1); }
+
+    /* === ПУСТИЙ СТАН === */
+    .empty-light-state { background: var(--card-bg); border: 2px dashed #ddd; border-radius: 20px; padding: 50px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+
+    @media (max-width: 768px) {
+        .album-header-card { padding: 25px 20px; }
+        .album-header-card h1 { font-size: 1.5rem; }
+        .info-badge { font-size: 0.75rem; padding: 6px 15px; }
+        .photo-overlay i { font-size: 2rem; }
+    }
+</style>
+{% endblock %}

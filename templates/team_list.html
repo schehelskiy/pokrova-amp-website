@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-5 pb-5 position-relative z-2" style="padding-top: 130px; background-color: #f8f9fb; min-height: 100vh;">
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-4">
+        <div class="title-section">
+            <h1 class="display-4 fw-900 text-uppercase text-dark m-0" style="border-left: 8px solid #fccb1a; padding-left: 20px;">
+                Команда
+            </h1>
+        </div>
+
+        <div class="team-switcher-premium">
+            <button class="switch-btn active" onclick="showTeam('team1', this)">Покрова АМП</button>
+            <button class="switch-btn" onclick="showTeam('team2', this)">Покрова АМП-2</button>
+        </div>
+    </div>
+
+    <div id="team1" class="team-pane active">
+        {% if t1_gk %}
+            <div class="pos-separator mb-4">Воротарі</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t1_gk %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if t1_players %}
+            <div class="pos-separator mb-4">Гравці</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t1_players %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if t1_staff %}
+            <div class="pos-separator mb-4">Персонал</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t1_staff %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if t1_coaches %}
+            <div class="pos-separator mb-4">Тренери</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t1_coaches %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if t1_management %}
+            <div class="pos-separator mb-4">Керівництво</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t1_management %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div id="team2" class="team-pane">
+        {% if t2_gk %}
+            <div class="pos-separator mb-4">Воротарі</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t2_gk %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if t2_players %}
+            <div class="pos-separator mb-4">Гравці</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t2_players %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if t2_staff %}
+            <div class="pos-separator mb-4">Персонал</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t2_staff %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if t2_coaches %}
+            <div class="pos-separator mb-4">Тренери</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t2_coaches %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+
+        {% if t2_management %}
+            <div class="pos-separator mb-4">Керівництво</div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+                {% for player in t2_management %}{% include "includes/member_card.html" %}{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if club_coaches or club_staff %}
+        <div class="staff-section-divider mt-5 pt-4">
+            <div class="divider-line"></div>
+            <h2 class="staff-main-title" style="color: #cfa12b;">Загальноклубний персонал</h2>
+            <div class="divider-line"></div>
+        </div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3 justify-content-center mb-5">
+            {% for player in club_coaches %}{% include "includes/member_card.html" %}{% endfor %}
+            {% for player in club_staff %}{% include "includes/member_card.html" %}{% endfor %}
+        </div>
+    {% endif %}
+
+    {% if club_management %}
+        <div class="staff-section-divider mt-5 pt-5">
+            <div class="divider-line"></div>
+            <h2 class="staff-main-title">Керівництво клубу</h2>
+            <div class="divider-line"></div>
+        </div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3 justify-content-center">
+            {% for player in club_management %}
+                {% include "includes/member_card.html" %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</div>
+
+<style>
+    .fw-900 { font-weight: 900; }
+    .team-switcher-premium { background: #ffffff; padding: 6px; border-radius: 50px; border: 1px solid #ddd; display: flex; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .switch-btn { background: transparent; border: none; color: #888; padding: 12px 30px; border-radius: 40px; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; transition: 0.3s; }
+    .switch-btn.active { background: #fccb1a; color: black; box-shadow: 0 4px 15px rgba(252, 203, 26, 0.3); }
+
+    .pos-separator { font-size: 1.1rem; color: #cfa12b; text-transform: uppercase; letter-spacing: 3px; font-weight: 900; display: flex; align-items: center; gap: 15px; }
+    .pos-separator::after { content: ''; flex: 1; height: 1px; background: #ddd; }
+    .staff-section-divider { display: flex; align-items: center; gap: 20px; margin: 80px 0 40px; }
+    .divider-line { flex: 1; height: 1px; background: #ddd; }
+    .staff-main-title { font-weight: 900; color: #1a1a1a; text-transform: uppercase; font-size: 1.3rem; white-space: nowrap; }
+    .team-pane { display: none; }
+    .team-pane.active { display: block; animation: fadeInUp 0.5s ease; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 768px) { .switch-btn { padding: 10px 15px; font-size: 0.7rem; } .pos-separator { font-size: 0.9rem; } }
+</style>
+
+<script>
+    function showTeam(teamId, btn) {
+        document.querySelectorAll('.team-pane').forEach(p => p.classList.remove('active'));
+        document.getElementById(teamId).classList.add('active');
+        document.querySelectorAll('.switch-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+</script>
+{% endblock %}

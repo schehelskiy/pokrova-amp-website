@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="match-detail-light-wrapper">
+    <div class="match-detail-bg" style="background-image: url('{% if match.background_image %}{{ match.background_image.url }}{% else %}https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000{% endif %}');"></div>
+    <div class="match-detail-overlay"></div>
+
+    <div class="container position-relative z-3" style="padding-top: 130px; padding-bottom: 80px;">
+
+        <a href="{% url 'matches_page' %}" class="back-link mb-4" data-aos="fade-right">
+            <i class="fas fa-arrow-left me-2"></i> Повернутись до календаря
+        </a>
+
+        <div class="match-hero-card premium-shadow" data-aos="zoom-in">
+            <div class="card-tag">{{ match.league }}</div>
+
+            <div class="match-teams-grid">
+                <div class="team-col text-center">
+                    <div class="clean-logo-wrap">
+                        {% if match.home_logo %}
+                            <img src="{{ match.home_logo.url }}" alt="{{ match.home_team }}">
+                        {% else %}
+                            <img src="https://ui-avatars.com/api/?name={{ match.home_team }}&background=f4f4f4&color=111&size=200">
+                        {% endif %}
+                    </div>
+                    <h2 class="team-display-name text-dark fw-900 mt-3">{{ match.home_team }}</h2>
+                </div>
+
+                <div class="center-col text-center">
+                    {% if match.is_finished %}
+                        <div class="score-display">
+                            <span class="score-digit">{{ match.home_score }}</span>
+                            <span class="score-sep">:</span>
+                            <span class="score-digit">{{ match.away_score }}</span>
+                        </div>
+                        <div class="match-status-label finished mt-2">Матч завершено</div>
+                    {% else %}
+                        <div class="vs-label">VS</div>
+                        <div class="time-box mt-2">
+                            <i class="far fa-clock text-gold-dark me-2"></i> {{ match.date|date:"H:i" }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="team-col text-center">
+                    <div class="clean-logo-wrap">
+                        {% if match.away_logo %}
+                            <img src="{{ match.away_logo.url }}" alt="{{ match.away_team }}">
+                        {% else %}
+                            <img src="https://ui-avatars.com/api/?name={{ match.away_team }}&background=f4f4f4&color=111&size=200">
+                        {% endif %}
+                    </div>
+                    <h2 class="team-display-name text-dark fw-900 mt-3">{{ match.away_team }}</h2>
+                </div>
+            </div>
+
+            {% if match.is_finished and match.home_scorers or match.away_scorers %}
+            <div class="mb-scorers-row mt-4 pt-4">
+                <div class="scorers-side text-end pe-2 pe-md-4">
+                    {{ match.home_scorers|linebreaksbr }}
+                </div>
+                <div class="scorers-icon"><i class="fas fa-futbol text-muted opacity-50"></i></div>
+                <div class="scorers-side text-start ps-2 ps-md-4">
+                    {{ match.away_scorers|linebreaksbr }}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="match-meta-bar mt-4 pt-4">
+                <div class="meta-item"><i class="far fa-calendar-alt text-gold-dark me-2"></i> {{ match.date|date:"d.m.Y" }}</div>
+                <div class="meta-item"><i class="fas fa-map-marker-alt text-gold-dark me-2"></i> {{ match.stadium }}</div>
+                {% if match.weather %}<div class="meta-item"><i class="fas fa-temperature-high text-gold-dark me-2"></i> {{ match.weather }}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="row g-4 mt-2">
+            <div class="col-lg-5" data-aos="fade-up" data-aos-delay="100">
+                <div class="info-light-box h-100 premium-shadow">
+                    <h4 class="box-title"><i class="fas fa-info-circle me-2 text-gold-dark"></i> Деталі зустрічі</h4>
+                    <div class="info-row"><span>Турнір:</span> <strong class="text-dark">{{ match.league }}</strong></div>
+                    <div class="info-row"><span>Стадіон:</span> <strong class="text-dark">{{ match.stadium }}</strong></div>
+                    {% if match.stadium_link %}<a href="{{ match.stadium_link }}" target="_blank" class="map-link mt-2"><i class="fas fa-external-link-alt me-2"></i> Дивитись на карті</a>{% endif %}
+
+                    {% if match.broadcast_link %}
+                    <a href="{{ match.broadcast_link }}" target="_blank" class="btn-broadcast mt-4">
+                        <i class="fab fa-youtube me-2"></i> Дивитись трансляцію
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
+                <div class="info-light-box h-100 premium-shadow">
+                    <h4 class="box-title"><i class="fas fa-history me-2 text-gold-dark"></i> Останні зустрічі</h4>
+                    <div class="h2h-summary mb-4">
+                        <div class="stat-pill win">В: {{ wins }}</div>
+                        <div class="stat-pill draw">Н: {{ draws }}</div>
+                        <div class="stat-pill loss">П: {{ losses }}</div>
+                    </div>
+                    <div class="table-responsive h2h-scroll">
+                        <table class="table table-borderless h2h-list m-0">
+                            {% for game in history %}
+                            <tr>
+                                <td class="date-col text-muted small">{{ game.date|date:"d.m.Y" }}</td>
+                                <td class="team-col text-end fw-bold text-dark">{{ game.home_team }}</td>
+                                <td class="score-col text-center text-gold-dark fs-5">{{ game.home_score }}:{{ game.away_score }}</td>
+                                <td class="team-col fw-bold text-dark">{{ game.away_team }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center py-4 text-muted">Історія ігор порожня</td></tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {% if match.is_finished and squad_players %}
+            <div class="col-12 mt-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="info-light-box vote-section premium-shadow">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <h2 class="text-uppercase mb-2 fw-900 text-dark">Обери <span class="text-gold-dark">Лева Матчу</span></h2>
+                            <p class="text-muted small mb-4 fw-bold">Голосуй за гравця, який показав найкращу гру в цьому поєдинку</p>
+
+                            {% if not user.is_authenticated %}
+                                <div class="alert alert-light border text-muted small">
+                                    <i class="fas fa-lock me-2 text-gold-dark"></i> Тільки авторизовані вболівальники можуть голосувати.
+                                </div>
+                            {% elif user_voted %}
+                                <div class="vote-results">
+                                    {% for stat in vote_stats %}
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1 small text-dark fw-bold">
+                                            <span>{{ stat.player.last_name }}</span>
+                                            <span class="text-gold-dark">{{ stat.percent }}%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px; border-radius: 4px; background-color: #eaeaea;">
+                                            <div class="progress-bar bg-gold shadow-gold" style="width: {{ stat.percent }}%; border-radius: 4px;"></div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="text-success small mt-3 fw-bold"><i class="fas fa-check-circle me-1"></i> Ваш голос прийнято!</div>
+                                </div>
+                            {% else %}
+                                <form action="" class="row g-2">
+                                    <div class="col-12 col-md-8">
+                                        <select class="form-select custom-select-light" id="playerSelect">
+                                            <option value="" selected disabled>Оберіть гравця...</option>
+                                            {% for player in squad_players %}
+                                                <option value="{{ player.id }}">{{ player.number }}. {{ player.first_name }} {{ player.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-md-4 mt-2 mt-md-0">
+                                        <button type="button" onclick="handleVote({{ match.id }})" class="btn-vote-submit w-100">Голосувати</button>
+                                    </div>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <div class="col-lg-6 d-none d-lg-block text-center">
+                            <i class="fas fa-trophy fa-8x text-gold-dark opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleVote(matchId) {
+        const playerId = document.getElementById('playerSelect').value;
+        if (!playerId) {
+            alert('Будь ласка, оберіть гравця зі списку');
+            return;
+        }
+        window.location.href = `/matches/${matchId}/vote/${playerId}/`;
+    }
+</script>
+
+<style>
+    /* === ОСНОВНІ ЗМІННІ (СВІТЛІ) === */
+    :root {
+        --bg-light: #f5f6f8;
+        --card-bg: #ffffff;
+        --club-gold: #fccb1a;
+        --gold-dark: #cfa12b;
+        --border-light: #eaeaea;
+        --text-dark: #1a1a1a;
+    }
+
+    .text-gold-dark { color: var(--gold-dark) !important; }
+    .bg-gold { background-color: var(--club-gold) !important; }
+    .premium-shadow { box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid var(--border-light); }
+
+    /* Обертка */
+    .match-detail-light-wrapper {
+        position: relative; background: var(--bg-light); color: var(--text-dark);
+        min-height: 100vh; overflow-x: clip;
+    }
+
+    /* Світлий розмитий фон */
+    .match-detail-bg {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-size: cover; background-position: center;
+        filter: blur(8px) grayscale(50%); opacity: 0.1; z-index: 1;
+    }
+    .match-detail-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(245,246,248,0.4) 0%, var(--bg-light) 90%); z-index: 2;
+    }
+
+    .back-link { color: #666; text-decoration: none; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; transition: 0.3s; display: inline-block; }
+    .back-link:hover { color: var(--gold-dark); transform: translateX(-5px); }
+
+    /* === ГОЛОВНА КАРТКА === */
+    .match-hero-card {
+        background: var(--card-bg);
+        border-radius: 30px;
+        padding: 50px 30px 40px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .card-tag {
+        position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+        background: var(--club-gold); color: #000; padding: 5px 25px;
+        font-weight: 900; font-size: 0.75rem; text-transform: uppercase;
+        border-radius: 0 0 15px 15px; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(252, 203, 26, 0.3);
+    }
+
+    /* Флекс-сітка для табло */
+    .match-teams-grid { display: flex; align-items: center; justify-content: center; gap: 30px; }
+    .team-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .center-col { flex: 0.6; display: flex; flex-direction: column; align-items: center; }
+
+    /* Логотипи */
+    .clean-logo-wrap { width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; }
+    .clean-logo-wrap img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1)); transition: 0.4s; }
+    .match-hero-card:hover .clean-logo-wrap img { transform: scale(1.1) translateY(-5px); filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15)); }
+
+    .team-display-name { font-size: 1.6rem; letter-spacing: 0.5px; }
+
+    /* Рахунок */
+    .score-display { display: flex; align-items: center; justify-content: center; gap: 15px; }
+    .score-digit { font-size: 5.5rem; font-weight: 900; color: var(--gold-dark); text-shadow: 0 5px 15px rgba(207, 161, 43, 0.2); line-height: 1; }
+    .score-sep { font-size: 4rem; color: #ccc; }
+    .vs-label { font-size: 3rem; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 1.5px var(--gold-dark); }
+    .match-status-label { font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 2px; color: #888; }
+
+    .time-box { background: #f8f9fb; padding: 8px 25px; border-radius: 50px; font-weight: 900; font-size: 1.2rem; color: var(--text-dark); border: 1px solid var(--border-light); }
+
+    /* Автори голів */
+    .mb-scorers-row { display: flex; align-items: flex-start; justify-content: center; width: 100%; border-top: 1px solid var(--border-light); }
+    .scorers-side { flex: 1; color: #555; font-size: 0.95rem; line-height: 1.6; font-weight: 600; }
+    .scorers-icon { color: var(--text-dark); font-size: 1.2rem; margin: 0 10px; margin-top: 2px; }
+
+    /* Мета-дані */
+    .match-meta-bar { display: flex; justify-content: center; gap: 40px; border-top: 1px solid var(--border-light); padding-top: 20px; flex-wrap: wrap; }
+    .meta-item { color: #666; font-size: 0.95rem; font-weight: 700; }
+
+    /* === ІНФО БЛОКИ (Світлі) === */
+    .info-light-box { background: var(--card-bg); border-radius: 20px; padding: 35px; transition: 0.4s; }
+    .info-light-box:hover { border-color: var(--club-gold); box-shadow: 0 15px 40px rgba(252, 203, 26, 0.1); }
+    .box-title { color: var(--text-dark); font-weight: 900; text-transform: uppercase; font-size: 1.1rem; border-left: 4px solid var(--club-gold); padding-left: 15px; margin-bottom: 25px; }
+
+    .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; }
+    .info-row span { color: #888; font-weight: 600; }
+    .map-link { font-size: 0.85rem; color: var(--gold-dark); text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+    .map-link:hover { color: #000; }
+
+    .btn-broadcast { display: flex; align-items: center; justify-content: center; background: #cc0000; color: #fff; text-decoration: none; padding: 15px; border-radius: 12px; font-weight: 800; text-transform: uppercase; transition: 0.3s; box-shadow: 0 5px 15px rgba(204, 0, 0, 0.2); }
+    .btn-broadcast:hover { background: #ff0000; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(204, 0, 0, 0.4); color: #fff; }
+
+    /* H2H */
+    .h2h-summary { display: flex; gap: 10px; }
+    .stat-pill { padding: 6px 15px; border-radius: 8px; font-size: 0.8rem; font-weight: 800; }
+    .win { background: rgba(40, 167, 69, 0.15); color: #28a745; }
+    .draw { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
+    .loss { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
+    .h2h-list tr td { padding: 12px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+
+    /* Голосування */
+    .vote-section { border-left: 5px solid var(--club-gold) !important; border-top: 1px solid var(--border-light); border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); border-radius: 0 20px 20px 0; }
+
+    .custom-select-light { background-color: #f8f9fb; border: 1px solid var(--border-light); color: var(--text-dark); padding: 14px 20px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; outline: none; transition: 0.3s; }
+    .custom-select-light:focus { background-color: #fff; border-color: var(--club-gold); box-shadow: 0 0 0 3px rgba(252, 203, 26, 0.1); }
+
+    .btn-vote-submit { background: var(--club-gold); color: #000; border: none; padding: 14px; border-radius: 12px; font-weight: 800; text-transform: uppercase; transition: 0.3s; box-shadow: 0 4px 10px rgba(252, 203, 26, 0.2); }
+    .btn-vote-submit:hover { background: #111; color: var(--club-gold); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+    /* =========================================
+       МОБІЛЬНА АДАПТАЦІЯ (СУПЕР-ДИЗАЙН)
+       ========================================= */
+    @media (max-width: 992px) {
+        .match-hero-card { padding: 40px 15px 30px; }
+
+        /* 1. Команди і рахунок в один рядок (як у FlashScore) */
+        .match-teams-grid { flex-direction: row; flex-wrap: nowrap; align-items: flex-start; gap: 5px; }
+
+        .team-col { flex: 1; width: 35%; }
+        .center-col { flex: 1; width: 30%; margin-top: 10px; }
+
+        /* 2. Зменшені логотипи та текст */
+        .clean-logo-wrap { width: 80px; height: 80px; margin: 0 auto; }
+        .team-display-name { font-size: 1rem; line-height: 1.2; margin-top: 10px !important; }
+
+        /* 3. Зменшений рахунок */
+        .score-display { gap: 5px; }
+        .score-digit { font-size: 3rem; }
+        .score-sep { font-size: 2.5rem; }
+        .vs-label { font-size: 2rem; margin-top: 10px; }
+        .time-box { font-size: 1rem; padding: 5px 15px; margin-top: 15px; }
+
+        /* 4. Автори голів на мобільному */
+        .mb-scorers-row { flex-direction: row; padding-top: 15px; margin-top: 15px; align-items: flex-start; }
+        .scorers-side { font-size: 0.75rem; }
+        .scorers-icon { font-size: 0.9rem; margin: 0 5px; }
+
+        /* 5. Мета-інформація */
+        .match-meta-bar { flex-direction: column; align-items: center; gap: 10px; padding-top: 15px; margin-top: 15px; }
+        .meta-item { font-size: 0.85rem; }
+
+        /* 6. Таблиця H2H */
+        .h2h-scroll { overflow-x: auto; padding-bottom: 10px; }
+        .h2h-list tr td { font-size: 0.85rem; padding: 8px 5px; white-space: nowrap; }
+        .score-col { font-size: 1.1rem !important; }
+    }
+
+    @media (max-width: 400px) {
+        .clean-logo-wrap { width: 60px; height: 60px; }
+        .team-display-name { font-size: 0.85rem; }
+        .score-digit { font-size: 2.5rem; }
+    }
+</style>
+{% endblock %}

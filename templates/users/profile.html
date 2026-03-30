@@ -1,0 +1,547 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-page-bg">
+    <div class="glow-spot top-right"></div>
+    <div class="glow-spot bottom-left"></div>
+
+    <div class="container py-5 position-relative z-2">
+
+        <div class="glass-card p-4 p-md-5 mb-5" data-aos="fade-down">
+            <div class="d-flex flex-column flex-md-row align-items-center gap-4 gap-md-5">
+
+                <div class="position-relative">
+                    <div class="avatar-glow"></div>
+                    <div class="avatar-circle">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" alt="Аватар" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        {% else %}
+                            {{ user.username|make_list|first|upper }}
+                        {% endif %}
+                    </div>
+                    <div class="status-indicator online"></div>
+                </div>
+
+                <div class="text-center text-md-start flex-grow-1">
+                    <h5 class="text-gold-dark text-uppercase ls-2 mb-1 small fw-bold">Особистий кабінет</h5>
+                    <h1 class="text-dark fw-900 text-uppercase display-5 mb-2">
+                        {% if user.first_name %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                    </h1>
+
+                    <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 align-items-center mt-3">
+                        <span class="text-muted small">
+                            <i class="far fa-calendar-alt me-1"></i> З нами з {{ user.date_joined|date:"d.m.Y" }}
+                        </span>
+
+                        <a href="{% url 'account_logout' %}" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold small">
+                            <i class="fas fa-sign-out-alt me-1"></i> Вийти
+                        </a>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-4 border-start border-dark border-opacity-10 ps-md-4 mt-3 mt-md-0">
+                    <div class="text-center">
+                        <div class="stat-number">{{ orders.count }}</div>
+                        <div class="stat-label">Замовлень</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-lg-3" data-aos="fade-right" data-aos-delay="100">
+                <div class="glass-card p-3 h-100 sticky-top" style="top: 100px; z-index: 1;">
+                    <h6 class="text-muted text-uppercase fw-bold mb-3 ps-3 small ls-2">Меню</h6>
+
+                    <button class="nav-btn active mb-2" onclick="showTab('orders', this)">
+                        <span class="icon-box"><i class="fas fa-shopping-bag"></i></span>
+                        <span>Мої замовлення</span>
+                        <i class="fas fa-chevron-right ms-auto opacity-50 small arrow"></i>
+                    </button>
+
+                    <button class="nav-btn" onclick="showTab('settings', this)">
+                        <span class="icon-box"><i class="fas fa-user-cog"></i></span>
+                        <span>Налаштування</span>
+                        <i class="fas fa-chevron-right ms-auto opacity-50 small arrow"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-9" data-aos="fade-left" data-aos-delay="200">
+                <div class="glass-card p-4 p-md-5 h-100" style="min-height: 600px;">
+
+                    <div id="tab-orders" class="tab-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-dark border-opacity-10">
+                            <h3 class="text-dark text-uppercase fw-bold m-0">Історія</h3>
+                            <span class="badge bg-light text-dark border">{{ orders.count }}</span>
+                        </div>
+
+                        {% if orders %}
+                            <div class="orders-list">
+                                {% for order in orders %}
+                                <div class="order-item {% if forloop.counter > 3 %}d-none extra-order{% endif %}">
+                                    <div class="row align-items-center g-3">
+                                        <div class="col-6 col-md-3">
+                                            <div class="text-dark fw-bold fs-5">#{{ order.id }}</div>
+                                            <div class="text-muted small">{{ order.created_at|date:"d.m.Y" }}</div>
+                                        </div>
+
+                                        <div class="col-6 col-md-3 text-end text-md-start">
+                                            <div class="text-gold-dark fw-bold fs-5">{{ order.total_price }} ₴</div>
+                                            <div class="text-muted small">Сума</div>
+                                        </div>
+
+                                        <div class="col-md-4 text-md-center">
+                                            {% if order.status == 'new' %}
+                                                <span class="status-pill status-new"><i class="fas fa-circle small me-2"></i>Нове</span>
+                                            {% elif order.status == 'processing' %}
+                                                <span class="status-pill status-processing"><i class="fas fa-spinner fa-spin small me-2"></i>В обробці</span>
+                                            {% elif order.status == 'shipped' %}
+                                                <span class="status-pill status-shipped"><i class="fas fa-truck small me-2"></i>Відправлено</span>
+                                            {% elif order.status == 'completed' %}
+                                                <span class="status-pill status-completed"><i class="fas fa-check small me-2"></i>Виконано</span>
+                                            {% elif order.status == 'canceled' %}
+                                                <span class="status-pill status-canceled"><i class="fas fa-times small me-2"></i>Скасовано</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="col-md-2 text-end">
+                                            <button class="btn btn-icon-glass"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#orderModal{{ order.id }}"
+                                                    title="Деталі">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            {% if orders.count > 3 %}
+                            <div class="text-center mt-4" id="showMoreOrdersWrapper">
+                                <button type="button" class="btn btn-outline-dark rounded-pill px-4 fw-bold text-uppercase shadow-sm" onclick="showAllOrders()">
+                                    Показати всі замовлення <i class="fas fa-chevron-down ms-2"></i>
+                                </button>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="empty-state text-center py-5">
+                                <div class="empty-icon mb-4">
+                                    <i class="fas fa-shopping-basket"></i>
+                                </div>
+                                <h4 class="text-dark fw-bold mb-2">Історія порожня</h4>
+                                <p class="text-muted mb-4">Час обрати свій перший клубний мерч!</p>
+                                <a href="{% url 'shop_list' %}" class="btn btn-dark btn-lg fw-bold text-uppercase shadow-glow">
+                                    Перейти в магазин
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div id="tab-settings" class="tab-content" style="display: none;">
+                        <h3 class="text-dark text-uppercase fw-bold mb-4 pb-3 border-bottom border-dark border-opacity-10">
+                            Редагування
+                        </h3>
+
+                        <form method="post" enctype="multipart/form-data" class="settings-form">
+                            {% csrf_token %}
+
+                            <div class="row g-4">
+                                <div class="col-12 mb-2">
+                                    <div class="form-group">
+                                        <label>Фото профілю (Аватар)</label>
+                                        <div class="input-group-glass">
+                                            <span class="input-icon"><i class="fas fa-camera"></i></span>
+                                            <input type="file" name="avatar" accept="image/*" class="pt-3 pb-3">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Ім'я</label>
+                                        <div class="input-group-glass">
+                                            <span class="input-icon"><i class="fas fa-user"></i></span>
+                                            <input type="text" name="first_name" value="{{ user.first_name }}" placeholder="Введіть ім'я">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Прізвище</label>
+                                        <div class="input-group-glass">
+                                            <span class="input-icon"><i class="fas fa-signature"></i></span>
+                                            <input type="text" name="last_name" value="{{ user.last_name }}" placeholder="Введіть прізвище">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Email <span class="text-danger">*</span></label>
+                                        <div class="input-group-glass">
+                                            <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                                            <input type="email" name="email" value="{{ user.email }}" placeholder="name@example.com">
+                                        </div>
+                                        <div class="form-note mt-2 text-muted small">
+                                            <i class="fas fa-info-circle me-1 text-primary"></i> Використовується для чеків та сповіщень.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 text-end">
+                                <button type="submit" class="btn btn-dark btn-lg fw-bold text-uppercase shadow-glow px-5">
+                                    Зберегти
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="mt-5 pt-4 border-top">
+                            <h5 class="text-dark fw-bold text-uppercase mb-3"><i class="fas fa-shield-alt text-warning me-2"></i>Безпека акаунту</h5>
+                            <div class="d-flex flex-wrap gap-3">
+                                <a href="{% url 'account_change_password' %}" class="btn btn-outline-dark fw-bold">
+                                    <i class="fas fa-key me-2"></i>Змінити пароль
+                                </a>
+                                <a href="{% url 'account_logout' %}" class="btn btn-outline-danger fw-bold">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Вийти з акаунту
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for order in orders %}
+<div class="modal fade" id="orderModal{{ order.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content border-0 shadow-lg" style="background-color: #ffffff; color: #1a1a1a; border-radius: 15px; overflow: hidden;">
+
+            <div class="modal-header border-bottom bg-light">
+                <div>
+                    <h5 class="modal-title fw-bold text-uppercase text-dark">Замовлення #{{ order.id }}</h5>
+                    <p class="small text-muted m-0">{{ order.created_at|date:"d.m.Y H:i" }}</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0 align-middle">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3 text-muted text-uppercase small" style="width: 40%;">Товар</th>
+                                <th class="text-center py-3 text-muted text-uppercase small" style="width: 20%;">Ціна</th>
+                                <th class="text-center py-3 text-muted text-uppercase small" style="width: 15%;">К-сть</th>
+                                <th class="pe-4 text-end py-3 text-muted text-uppercase small" style="width: 25%;">Сума</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="product-thumb">
+                                            {% if item.product.image %}
+                                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                                            {% else %}
+                                                <div class="d-flex align-items-center justify-content-center h-100"><i class="fas fa-image text-muted"></i></div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ item.product.name }}</div>
+                                            <div class="small text-muted" style="font-size: 0.8rem;">
+                                                {{ item.product.get_category_display }}
+                                                {% if item.size %} | Розмір: <span class="text-dark fw-bold">{{ item.size }}</span>{% endif %}
+                                                {% if item.color %} | Колір: <span class="text-dark fw-bold">{{ item.color }}</span>{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="text-center">
+                                    <span class="fw-bold" style="font-size: 1.1rem;">
+                                        {{ item.price }} ₴
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <span class="bg-light text-dark px-3 py-1 border rounded fw-bold">
+                                        {{ item.quantity }}
+                                    </span>
+                                </td>
+
+                                <td class="pe-4 text-end fw-bold fs-5 text-dark">
+                                    {{ item.get_cost }} ₴
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 bg-light">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="text-uppercase text-muted small fw-bold mb-3">Доставка</h6>
+                            <div class="d-flex align-items-center gap-2 mb-1 text-dark">
+                                <i class="fas fa-truck text-primary"></i>
+                                <span class="fw-bold">{{ order.get_delivery_method_display }}</span>
+                            </div>
+                            <div class="text-muted small ms-4">{{ order.delivery_address }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-uppercase text-muted small fw-bold mb-3">Отримувач</h6>
+                            <div class="d-flex align-items-center gap-2 mb-1 text-dark">
+                                <i class="fas fa-user text-primary"></i>
+                                <span class="fw-bold">{{ order.customer_name }}</span>
+                            </div>
+                            <div class="text-muted small ms-4">{{ order.customer_phone }}</div>
+                        </div>
+                    </div>
+
+                    {% if order.discount_amount > 0 %}
+                    <div class="mt-3 pt-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Клубна знижка:</span>
+                            <span class="text-success fw-bold">-{{ order.discount_amount }} ₴</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if order.comment %}
+                    <div class="mt-3 p-3 rounded bg-white border">
+                        <small class="text-primary fw-bold text-uppercase">Коментар:</small>
+                        <p class="small m-0 fst-italic mt-1 text-dark">"{{ order.comment }}"</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="modal-footer border-top justify-content-between px-4 bg-white">
+                <span class="text-muted small">ID: {{ order.id }}</span>
+                <div class="fs-4 fw-bold text-dark">Всього: <span class="text-primary">{{ order.total_price }} ₴</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+    // Навігація
+    function showTab(tabName, btnElement) {
+        document.getElementById('tab-orders').style.display = 'none';
+        document.getElementById('tab-settings').style.display = 'none';
+
+        const target = document.getElementById('tab-' + tabName);
+        target.style.display = 'block';
+
+        target.style.opacity = 0;
+        setTimeout(() => target.style.opacity = 1, 10);
+
+        let buttons = document.querySelectorAll('.nav-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+
+    // ЛОГІКА РОЗГОРТАННЯ ЗАМОВЛЕНЬ
+    function showAllOrders() {
+        const hiddenOrders = document.querySelectorAll('.extra-order');
+        hiddenOrders.forEach(order => {
+            order.classList.remove('d-none');
+            order.style.opacity = 0;
+            setTimeout(() => {
+                order.style.transition = 'opacity 0.5s ease';
+                order.style.opacity = 1;
+            }, 50);
+        });
+
+        document.getElementById('showMoreOrdersWrapper').style.display = 'none';
+    }
+</script>
+
+<style>
+    :root {
+        --club-gold: #fccb1a;
+        --club-gold-dark: #d4a000;
+    }
+
+    /* === ФОН === */
+    .profile-page-bg {
+        min-height: 100vh;
+        background-color: #f8f9fb;
+        padding-top: 140px;
+        padding-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glow-spot {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(252, 203, 26, 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
+    .top-right { top: -200px; right: -200px; }
+    .bottom-left { bottom: -200px; left: -200px; }
+
+    /* === КАРТКИ === */
+    .glass-card {
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
+    }
+
+    .text-gold-dark { color: var(--club-gold-dark); }
+
+    /* === АВАТАР === */
+    .avatar-circle {
+        width: 110px;
+        height: 110px;
+        background: linear-gradient(135deg, var(--club-gold) 0%, var(--club-gold-dark) 100%);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        font-weight: 900;
+        position: relative;
+        z-index: 2;
+        border: 4px solid #ffffff;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        overflow: hidden; /* Важливо для круглої фотки */
+    }
+    .avatar-glow {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 130px; height: 130px;
+        border-radius: 50%;
+        background: rgba(252, 203, 26, 0.2);
+        filter: blur(15px);
+        animation: pulse 3s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; }
+        50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+        100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; }
+    }
+    .status-indicator {
+        position: absolute; bottom: 5px; right: 5px; width: 24px; height: 24px;
+        border-radius: 50%; border: 3px solid #ffffff; z-index: 3;
+    }
+    .status-indicator.online { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+
+    /* === СТАТИСТИКА === */
+    .stat-number { font-size: 2.5rem; font-weight: 900; color: #1a1a1a; line-height: 1; }
+    .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-top: 5px; fw-bold }
+
+    /* === МЕНЮ === */
+    .nav-btn {
+        width: 100%;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 16px;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        color: #666;
+        font-weight: 700;
+        text-align: left;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 8px;
+    }
+    .nav-btn .icon-box {
+        width: 36px; height: 36px; background: #f0f0f0; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center; margin-right: 15px; transition: 0.3s; color: #666;
+    }
+    .nav-btn:hover { background: #f8f9fb; color: #1a1a1a; }
+    .nav-btn:hover .icon-box { background: #e2e2e2; color: #1a1a1a; transform: scale(1.1); }
+    .nav-btn.active {
+        background: #fff9e6;
+        border: 1px solid rgba(252, 203, 26, 0.3);
+        color: #1a1a1a;
+    }
+    .nav-btn.active .icon-box { background: var(--club-gold); color: #fff; box-shadow: 0 0 15px rgba(252, 203, 26, 0.4); }
+    .nav-btn.active .arrow { opacity: 1; color: var(--club-gold-dark); transform: translateX(5px); transition: 0.3s; }
+
+    /* === ЗАМОВЛЕННЯ === */
+    .order-item {
+        background: #ffffff;
+        border: 1px solid #eee;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.01);
+    }
+    .order-item:hover {
+        border-color: rgba(252, 203, 26, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .status-pill {
+        display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 50px;
+        font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .status-new { background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; }
+    .status-processing { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .status-shipped { background: #f3e8ff; color: #9333ea; border: 1px solid #e9d5ff; }
+    .status-completed { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .status-canceled { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+    .btn-icon-glass {
+        width: 40px; height: 40px; border-radius: 12px; border: 1px solid #eee;
+        background: #f8f9fb; color: #555; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-icon-glass:hover { background: #1a1a1a; color: #fff; transform: scale(1.1); border-color: #1a1a1a; }
+
+    /* === ФОРМИ === */
+    .settings-form label {
+        display: block; margin-bottom: 10px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; color: #666; letter-spacing: 1px;
+    }
+    .input-group-glass { position: relative; }
+    .input-group-glass .input-icon {
+        position: absolute; top: 50%; left: 15px; transform: translateY(-50%); color: #aaa; font-size: 1.1rem; transition: 0.3s;
+    }
+    .input-group-glass input {
+        width: 100%; background: #f8f9fb; border: 1px solid #e2e8f0; color: #1a1a1a; border-radius: 12px; padding: 15px 15px 15px 50px; transition: 0.3s; font-size: 1rem; font-weight: 500;
+    }
+    .input-group-glass input:focus {
+        background: #ffffff; border-color: var(--club-gold); outline: none; box-shadow: 0 0 0 4px rgba(252, 203, 26, 0.15);
+    }
+    .input-group-glass input:focus + .input-icon { color: var(--club-gold-dark); }
+
+    .shadow-glow { box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: 0.3s; }
+    .shadow-glow:hover { box-shadow: 0 15px 25px rgba(0,0,0,0.15); transform: translateY(-3px); }
+
+    .product-thumb {
+        width: 50px; height: 50px; border-radius: 8px; overflow: hidden; background: #eee; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center;
+    }
+    .product-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .empty-icon {
+        width: 80px; height: 80px; background: #f0f0f0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; color: #888; margin: 0 auto;
+    }
+
+    .tab-content { transition: opacity 0.4s ease; }
+</style>
+{% endblock %}

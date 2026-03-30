@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="sh-dark-header">
+    <div class="container">
+        <a href="{% url 'team_list' %}" class="back-link-gold mb-4 d-inline-block">
+            <i class="fas fa-arrow-left me-2"></i> Назад до складу
+        </a>
+
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="player-role-label">
+                    {% if player.position in 'GK DF MF FW' %}Гравець{% else %}Персонал{% endif %}
+                </div>
+                <h1 class="player-hero-name text-uppercase text-white fw-900 mb-0RubberRubber">
+                    {{ player.last_name }}<br>
+                    <span class="fw-light">{{ player.first_name }}</span>
+                </h1>
+
+                {% if player.number %}
+                    <div class="player-hero-number">{{ player.number }}</div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-5 offset-lg-1" data-aos="fade-left">
+                <div class="info-list">
+                    <div class="info-row">
+                        <span class="info-label">Позиція</span>
+                        <span class="info-value">{{ player.get_position_display }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Вік</span>
+                        <span class="info-value">{{ player.age }}</span>
+                    </div>
+                    {% if player.birth_date %}
+                    <div class="info-row">
+                        <span class="info-label">Дата народження</span>
+                        <span class="info-value">{{ player.birth_date|date:"d E Y" }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sh-white-body bg-white">
+    <div class="container">
+        <div class="row align-items-stretch">
+
+            <div class="col-lg-5 d-flex align-items-end justify-content-center position-relative text-center px-0">
+                <div class="hero-photo-wrapper w-100 h-100 d-flex align-items-end justify-content-center" data-aos="fade-up">
+                    {% if player.full_size_photo %}
+                        <img src="{{ player.full_size_photo.url }}" class="img-fluid hero-img" alt="{{ player.last_name }}">
+                    {% elif player.photo %}
+                        <img src="{{ player.photo.url }}" class="img-fluid hero-img" alt="{{ player.last_name }}">
+                    {% else %}
+                        <div class="py-5 text-center bg-light rounded-4 mb-4 w-100"><i class="fas fa-user fa-5x opacity-10"></i></div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-7 py-5 mt-md-4" data-aos="fade-up" data-aos-delay="100">
+
+                {% if player.position == 'GK' or player.position == 'DF' or player.position == 'MF' or player.position == 'FW' %}
+                    <div class="stats-grid-sh mb-5">
+                        <div class="stat-box-sh">
+                            <span class="label">Ігри</span>
+                            <span class="value">{{ player.matches_played }}</span>
+                        </div>
+                        <div class="stat-box-sh">
+                            <span class="label">Голи</span>
+                            <span class="value text-gold-dark">{{ player.goals }}</span>
+                        </div>
+                        <div class="stat-box-sh">
+                            <span class="label">Асисти</span>
+                            <span class="value">{{ player.assists }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="bio-section-light ps-lg-4">
+                    <h2 class="fw-900 text-dark text-uppercase mb-4" style="font-size: 1.5rem; letter-spacing: 1px;">Біографія та кар'єра</h2>
+                    <div class="bio-text text-dark" style="line-height: 1.6; font-weight: 500; font-size: 0.95rem; text-align: justify;">
+                        {{ player.bio|default:"Інформація про цього представника клубу скоро з'явиться."|linebreaks }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Темний верхній блок */
+    .sh-dark-header { background-color: #1f2024; padding-top: 150px; padding-bottom: 80px; border-bottom: 4px solid #fccb1a; }
+
+    .back-link-gold { color: #fccb1a; text-decoration: none; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: 0.3s; }
+    .back-link-gold:hover { color: #fff; }
+
+    .player-role-label { color: #aaa; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
+    .player-hero-name { font-size: 4.5rem; line-height: 0.95; letter-spacing: -1px; }
+    .player-hero-number { font-size: 8rem; font-weight: 900; font-style: italic; color: #fff; line-height: 0.8; margin-top: 30px; text-shadow: 0px 10px 20px rgba(0,0,0,0.5); }
+
+    /* Таблиця характеристик */
+    .info-list { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; }
+    .info-row { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 18px 0; }
+    .info-label { color: #fccb1a; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-right: 15px; }
+    .info-value { color: white; font-size: 1.4rem; font-weight: 900; text-transform: uppercase; text-align: right; line-height: 1; }
+
+    /* ФОТОГРАФІЯ - Монументально велике фото, притиснуте до низу */
+    /* ОНОВЛЕНО: Збільшено min-height, щоб забезпечити місце для великого фото */
+    .hero-photo-wrapper { margin: 0; padding: 0; position: relative; z-index: 10; min-height: 500px; }
+    .hero-img {
+        /* ОНОВЛЕНО: Збільшено max-height для справді великого ефекту */
+        max-height: 750px;
+        width: 100%;
+        /* ОНОВЛЕНО: Видалено max-width, щоб дозволити заповнити всю ширину колонки */
+        /* max-width: 450px; */
+        object-fit: contain;
+        object-position: bottom; /* Ідеально притискає зображення до нижнього краю */
+        display: block;
+        margin: 0 auto;
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
+    }
+
+    /* Статистика */
+    .stats-grid-sh { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; border-bottom: 1px solid #eee; padding-bottom: 40px; }
+    .stat-box-sh { background: #f8f9fb; padding: 25px 20px; border-radius: 12px; border-left: 5px solid #1f2024; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .stat-box-sh .label { display: block; font-size: 0.75rem; font-weight: 800; color: #777; text-transform: uppercase; margin-bottom: 5px; }
+    .stat-box-sh .value { font-size: 2.8rem; font-weight: 900; color: #1f2024; line-height: 1; }
+    .stat-box-sh .text-gold-dark { color: #d4a017; }
+
+    /* Біографія - відступи абзаців */
+    .bio-text p { margin-bottom: 1rem; }
+
+    /* Адаптивність */
+    @media (max-width: 991px) {
+        .sh-dark-header { padding-top: 120px; padding-bottom: 60px; }
+        .player-hero-name { font-size: 3.2rem; }
+        .player-hero-number { font-size: 6rem; margin-top: 20px; margin-bottom: 30px; }
+        .info-row { flex-direction: column; align-items: flex-start; padding: 12px 0; }
+        .info-label { margin-bottom: 5px; }
+        .info-value { text-align: left; }
+        .stats-grid-sh { grid-template-columns: 1fr; gap: 15px; }
+
+        /* ОНОВЛЕНО: Зменшено max-height для мобільних пристроїв, щоб воно не займало весь екран */
+        .hero-img { max-height: 450px; }
+        .bio-section-light { padding-left: 0 !important; }
+    }
+</style>
+{% endblock %}

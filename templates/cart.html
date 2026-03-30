@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<div class="checkout-page-light-bg">
+    <div class="container py-5 position-relative z-2" style="margin-top: 80px;">
+        <h2 class="text-dark text-uppercase fw-900 mb-4">Оформлення замовлення</h2>
+
+        {% if cart_items %}
+        <form method="post" class="row g-4" id="checkout-form">
+            {% csrf_token %}
+
+            <div class="col-lg-8">
+                <div class="checkout-glass-section mb-4" data-aos="fade-up">
+                    <div class="section-header">
+                        <div class="step-icon"><i class="fas fa-user"></i></div>
+                        <h5 class="text-dark fw-900 m-0 text-uppercase">1. Ваші дані</h5>
+                    </div>
+                    <div class="section-body row g-3">
+                        <div class="col-md-6">
+                            <label class="label-muted">Ім'я та Прізвище</label>
+                            <input type="text" name="name" class="input-light" required
+                                   value="{% if user.is_authenticated %}{{ user.first_name }} {{ user.last_name }}{% endif %}"
+                                   placeholder="Введіть ПІБ">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="label-muted">Телефон</label>
+                            <input type="tel" name="phone" class="input-light" required placeholder="+380..." value="+380">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-glass-section mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="section-header">
+                        <div class="step-icon"><i class="fas fa-truck"></i></div>
+                        <h5 class="text-dark fw-900 m-0 text-uppercase">2. Доставка</h5>
+                    </div>
+                    <div class="section-body">
+                        <div class="row g-3">
+                            <div class="col-md-12 mb-3">
+                                <label class="label-muted">Служба доставки</label>
+                                <select name="delivery" id="delivery-method" class="input-light">
+                                    <option value="nova_poshta" selected>Нова Пошта (Відділення)</option>
+                                    <option value="pickup">Самовивіз (Львів)</option>
+                                </select>
+                            </div>
+
+                            <div id="np-block" class="row g-3 m-0 p-0">
+                                <div class="col-md-6">
+                                    <label class="label-muted">Місто</label>
+                                    <select name="city_name" id="city-select" class="input-light"></select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="label-muted">Відділення (введіть номер)</label>
+                                    <select name="warehouse_name" id="warehouse-select" class="input-light" disabled>
+                                        <option value="">Спочатку оберіть місто</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-glass-section mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="section-header">
+                        <div class="step-icon"><i class="fas fa-wallet"></i></div>
+                        <h5 class="text-dark fw-900 m-0 text-uppercase">3. Оплата</h5>
+                    </div>
+                    <div class="section-body py-4">
+                        <div class="payment-option-light">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="fas fa-check-circle text-gold-dark fs-4"></i>
+                                <div>
+                                    <span class="text-dark fw-bold d-block">Оплата при отриманні</span>
+                                    <span class="text-muted small">Оплата після огляду у відділенні.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4" data-aos="fade-up" data-aos-delay="300">
+                     <label class="label-muted fw-bold mb-2">Коментар до замовлення</label>
+                     <textarea name="comment" class="input-light" rows="3" placeholder="Додаткова інформація (необов'язково)..."></textarea>
+                </div>
+            </div>
+
+            <div class="col-lg-4" data-aos="fade-left" data-aos-delay="400">
+                <div class="summary-card-light sticky-top" style="top: 100px;">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="text-dark fw-900 m-0 text-uppercase">Ваше замовлення</h5>
+                        <a href="{% url 'shop_list' %}" class="text-gold-dark text-decoration-none small fw-bold edit-link">Змінити</a>
+                    </div>
+
+                    <div class="order-items-scroll mb-4">
+                        {% for item in cart_items %}
+                        <div class="checkout-item-light">
+                            <div class="d-flex gap-3 align-items-center">
+                                <div class="checkout-img-light">
+                                    {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" alt="product">
+                                    {% else %}<i class="fas fa-camera text-muted opacity-50"></i>{% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="text-dark fw-bold m-0 small">{{ item.product.name }}</h6>
+                                    <div class="text-muted x-small mt-1">
+                                        {{ item.quantity }} шт. {% if item.size %}| Розмір: <span class="fw-bold text-dark">{{ item.size }}</span>{% endif %}
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="text-dark fw-900">{{ item.total_price|floatformat:0 }} ₴</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted fw-bold">Сума товарів:</span>
+                        <span class="text-dark fw-bold">{{ subtotal|floatformat:0 }} ₴</span>
+                    </div>
+                    {% if discount > 0 %}
+                    <div class="d-flex justify-content-between mb-2 text-success fw-bold">
+                        <span>Клубна знижка (5%):</span>
+                        <span>-{{ discount|floatformat:0 }} ₴</span>
+                    </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted fw-bold">Доставка:</span>
+                        <span class="text-dark fw-bold">За тарифами НП</span>
+                    </div>
+
+                    <div class="total-block mt-4 mb-4">
+                        <span class="text-muted fs-6 fw-bold text-uppercase">До сплати:</span>
+                        <span class="text-gold-dark fs-1 fw-900 lh-1">{{ total_price|floatformat:0 }} <small class="fs-6 text-dark">₴</small></span>
+                    </div>
+
+                    <button type="submit" name="checkout" class="btn btn-cyber-gold w-100 py-3 fw-900 text-uppercase shadow-sm">
+                        Підтвердити замовлення
+                    </button>
+                </div>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    const API_KEY = 'ce32efff05e6d16eaa63035394368dd4'; // ВСТАВ СВІЙ КЛЮЧ
+
+    $('#city-select').select2({
+        placeholder: 'Пошук міста...',
+        minimumInputLength: 2,
+        ajax: {
+            url: 'https://api.novaposhta.ua/v2.0/json/',
+            type: 'POST',
+            dataType: 'json',
+            delay: 300,
+            data: params => JSON.stringify({
+                "apiKey": API_KEY, "modelName": "Address", "calledMethod": "getCities",
+                "methodProperties": { "FindByString": params.term }
+            }),
+            processResults: data => ({
+                results: data.data.map(i => ({ id: i.Description, text: i.Description, ref: i.Ref }))
+            })
+        }
+    });
+
+    $('#city-select').on('select2:select', function (e) {
+        const cityRef = e.params.data.ref;
+        $('#warehouse-select').prop('disabled', false).val(null).trigger('change');
+
+        $('#warehouse-select').select2({
+            placeholder: 'Введіть номер відділення (напр. 90)...',
+            ajax: {
+                url: 'https://api.novaposhta.ua/v2.0/json/',
+                type: 'POST',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    let search = params.term || "";
+                    if (/^\d+$/.test(search)) { search = "Відділення №" + search; }
+
+                    return JSON.stringify({
+                        "apiKey": API_KEY, "modelName": "Address", "calledMethod": "getWarehouses",
+                        "methodProperties": { "CityRef": cityRef, "FindByString": search }
+                    });
+                },
+                processResults: data => ({
+                    results: data.data.map(i => ({ id: i.Description, text: i.Description }))
+                })
+            }
+        });
+    });
+});
+</script>
+
+<style>
+    /* === ОСНОВНІ ЗМІННІ (СВІТЛІ) === */
+    :root {
+        --bg-light: #f8f9fb;
+        --card-bg: #ffffff;
+        --club-gold: #fccb1a;
+        --gold-dark: #cfa12b;
+        --border-light: #eaeaea;
+        --text-dark: #1a1a1a;
+    }
+
+    .text-gold-dark { color: var(--gold-dark) !important; }
+
+    .checkout-page-light-bg { min-height: 100vh; background-color: var(--bg-light); padding-bottom: 80px; font-family: 'Inter', sans-serif; }
+
+    /* === СЕКЦІЇ (БІЛІ КАРТКИ) === */
+    .checkout-glass-section {
+        background: var(--card-bg); border: 1px solid var(--border-light);
+        border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .section-header {
+        background: #fff; padding: 20px 25px; border-bottom: 1px solid var(--border-light);
+        display: flex; align-items: center; gap: 15px;
+    }
+
+    .step-icon {
+        width: 35px; height: 35px; background: rgba(252, 203, 26, 0.15);
+        color: var(--gold-dark); border-radius: 50%; display: flex;
+        align-items: center; justify-content: center; font-size: 1rem;
+    }
+
+    .section-body { padding: 25px; }
+
+    /* === ІНПУТИ ТА ЛЕЙБЛИ === */
+    .label-muted { color: #666; font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .input-light {
+        width: 100%; background: #f8f9fa; border: 1px solid var(--border-light);
+        color: var(--text-dark); padding: 14px 20px; border-radius: 12px;
+        font-size: 0.95rem; font-weight: 500; transition: 0.3s; outline: none;
+    }
+    .input-light:focus { background: #fff; border-color: var(--club-gold); box-shadow: 0 0 0 4px rgba(252, 203, 26, 0.1); }
+    .input-light::placeholder { color: #aaa; }
+
+    /* === ОПЛАТА ПЛАШКА === */
+    .payment-option-light {
+        background: #fffcf0; border: 1px solid rgba(252, 203, 26, 0.3);
+        border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(252, 203, 26, 0.05);
+    }
+
+    /* === ПРАВА КОЛОНКА (СУМА) === */
+    .summary-card-light {
+        background: var(--card-bg); padding: 30px; border-radius: 20px;
+        border: 1px solid var(--border-light); border-top: 5px solid var(--club-gold);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+    }
+
+    .edit-link:hover { text-decoration: underline !important; color: #000 !important; }
+
+    .order-items-scroll { max-height: 350px; overflow-y: auto; padding-right: 5px; }
+    .order-items-scroll::-webkit-scrollbar { width: 4px; }
+    .order-items-scroll::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+    .checkout-item-light { padding: 15px 0; border-bottom: 1px solid var(--border-light); }
+    .checkout-item-light:last-child { border-bottom: none; }
+
+    .checkout-img-light {
+        width: 55px; height: 55px; background: #f8f9fa; border-radius: 10px;
+        overflow: hidden; display: flex; align-items: center; justify-content: center;
+        border: 1px solid #eaeaea;
+    }
+    .checkout-img-light img { width: 100%; height: 100%; object-fit: contain; }
+
+    .total-block {
+        display: flex; justify-content: space-between; align-items: center;
+        padding-top: 20px; border-top: 2px dashed var(--border-light);
+    }
+
+    /* КНОПКА ПІДТВЕРДИТИ */
+    .btn-cyber-gold {
+        background: var(--club-gold); color: #000; border: none; border-radius: 12px;
+        transition: 0.3s; letter-spacing: 1px;
+    }
+    .btn-cyber-gold:hover { background: #111; color: var(--club-gold); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+    /* === SELECT2 (СТИЛІ ДЛЯ СВІТЛОЇ ТЕМИ) === */
+    .select2-container--default .select2-selection--single {
+        background: #f8f9fa !important; border: 1px solid var(--border-light) !important;
+        height: 52px !important; border-radius: 12px !important; display: flex; align-items: center;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: var(--text-dark) !important; padding-left: 20px !important; font-weight: 500; font-size: 0.95rem;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow { height: 50px !important; right: 10px !important; }
+
+    .select2-dropdown { background: #fff !important; border: 1px solid var(--border-light) !important; border-radius: 12px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important; overflow: hidden; }
+    .select2-search__field { background: #f8f9fa !important; color: var(--text-dark) !important; border: 1px solid var(--border-light) !important; border-radius: 8px !important; padding: 10px !important; }
+    .select2-results__option { color: var(--text-dark) !important; padding: 10px 20px !important; font-size: 0.9rem; border-bottom: 1px solid #f0f0f0; }
+    .select2-results__option--highlighted { background: rgba(252, 203, 26, 0.15) !important; color: var(--gold-dark) !important; font-weight: bold; }
+
+    .fw-900 { font-weight: 900; }
+    .x-small { font-size: 0.75rem; }
+</style>
+{% endblock %}

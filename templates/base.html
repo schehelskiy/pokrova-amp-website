@@ -1,0 +1,510 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ФК ПОКРОВА АМП</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --club-gold: #fccb1a;
+            --premium-gold: #D4AF37;
+            --bg-light: #f5f6f8;
+            --text-dark: #1a1a1a;
+            --sidebar-bg: #0f0f0f;
+            --sidebar-gradient: linear-gradient(180deg, #1a1a1a 0%, #050505 100%);
+            --footer-bg: #080808;
+            --header-height: 80px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        a, button, .btn, input, select, textarea, .card, img {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        }
+
+        .main-content {
+            width: 100%; min-height: 100vh; position: relative;
+            background-color: var(--bg-light); display: flex; flex-direction: column;
+        }
+
+        /* =========================================
+           ГОРИЗОНТАЛЬНИЙ ХЕДЕР ДЛЯ ПК (ГУМОВИЙ)
+           ========================================= */
+        .desktop-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
+            background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); z-index: 2000;
+            display: flex; align-items: center; border-bottom: 2px solid rgba(252, 203, 26, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .desktop-header-container {
+            width: 100%; max-width: 100%; padding: 0 3vw;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
+        .header-left { justify-content: flex-start; }
+        .header-right { justify-content: flex-end; gap: 10px; }
+
+        .header-logo img { height: 50px; filter: drop-shadow(0 0 10px rgba(252, 203, 26, 0.2)); transition: transform 0.3s; }
+        .header-logo:hover img { transform: scale(1.05); }
+
+        .desktop-nav-menu {
+            flex: 2; display: flex; align-items: center; justify-content: center;
+            gap: clamp(8px, 1.2vw, 25px);
+        }
+
+        .desktop-nav-link {
+            color: #ccc; text-decoration: none; text-transform: uppercase;
+            font-weight: 700; font-size: clamp(0.6rem, 0.8vw, 0.8rem);
+            letter-spacing: 0.5px; position: relative; padding: 10px 0; white-space: nowrap;
+        }
+        .desktop-nav-link:hover, .desktop-nav-link.active { color: #fff; }
+        .desktop-nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 2px; background: var(--club-gold); transition: 0.3s; }
+        .desktop-nav-link:hover::after, .desktop-nav-link.active::after { width: 100%; }
+
+        .desktop-nav-fame { color: var(--premium-gold); }
+        .desktop-nav-fame::after { background: var(--premium-gold); }
+
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+
+        .profile-pill { display: flex; align-items: center; gap: 10px; padding: 4px 15px 4px 4px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; text-decoration: none; color: #fff; white-space: nowrap; }
+        .profile-pill:hover { background: rgba(255,255,255,0.2); border-color: var(--club-gold); color: #fff; }
+        .icon-circle { width: 32px; height: 32px; background: var(--club-gold); color: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .username-text { font-weight: 800; font-size: 0.8rem; text-transform: uppercase; }
+
+        .logout-btn { background: transparent; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer; padding: 0; }
+        .logout-btn:hover { color: #ff4d4d; }
+
+        .auth-btn { font-weight: 800; padding: 8px 15px; text-transform: uppercase; text-decoration: none; font-size: 0.75rem; border-radius: 30px; white-space: nowrap; }
+        .btn-login { background-color: var(--club-gold); color: black !important; box-shadow: 0 4px 15px rgba(252, 203, 26, 0.2); }
+        .btn-login:hover { background: #fff; transform: translateY(-2px); }
+        .btn-register { background: transparent; color: #fff !important; border: 1px solid rgba(255,255,255,0.3); }
+        .btn-register:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+        .btn-admin-quick { text-decoration: none; color: var(--club-gold); font-size: 1.2rem; }
+        .btn-admin-quick:hover { color: #fff; transform: scale(1.1); }
+
+        .page-wrapper { padding-top: var(--header-height); }
+
+        /* =========================================
+           САЙДБАР ТА ПАНЕЛЬ ДЛЯ МОБІЛКИ
+           ========================================= */
+        .sidebar { width: var(--sidebar-width); background: var(--sidebar-gradient); height: 100vh; position: fixed; left: 0; top: 0; border-right: 1px solid rgba(252, 203, 26, 0.15); z-index: 2000; display: flex; flex-direction: column; transition: transform 0.4s ease-in-out; transform: translateX(-100%); }
+        .sidebar.active { transform: translateX(0); box-shadow: 10px 0 50px rgba(0,0,0,0.8); }
+        .sidebar-logo { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; flex-shrink: 0; }
+        .sidebar-logo img { max-width: 120px; filter: drop-shadow(0 0 15px rgba(252, 203, 26, 0.1)); }
+        .nav-menu { display: flex; flex-direction: column; width: 100%; padding: 0 10px; gap: 4px; }
+        .nav-link { display: flex; align-items: center; padding: 12px 15px; color: rgba(255, 255, 255, 0.7) !important; text-transform: uppercase; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.5px; text-decoration: none !important; border-radius: 8px; border: 1px solid transparent; transition: all 0.3s ease; }
+        .nav-link i { width: 20px; margin-right: 10px; color: var(--club-gold); opacity: 0.7; font-size: 1rem; transition: 0.3s; }
+        .nav-link:hover { color: white !important; background: rgba(255, 255, 255, 0.05); border-color: rgba(252, 203, 26, 0.1); padding-left: 20px; }
+        .nav-link.active { color: var(--club-gold) !important; background: linear-gradient(90deg, rgba(252, 203, 26, 0.1) 0%, transparent 100%); border-left: 3px solid var(--club-gold); }
+
+        .top-panel-mobile { display: none; height: 60px; align-items: center; justify-content: flex-end; padding: 0 15px; position: fixed; top: 0; width: 100%; z-index: 1000; background: linear-gradient(to bottom, rgba(245,246,248,1) 0%, rgba(245,246,248,0.9) 80%, transparent); }
+        .mobile-btn-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 2001; background: var(--club-gold); color: black; border: none; border-radius: 12px; width: 40px; height: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); justify-content: center; align-items: center; }
+        #sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1999; display: none; backdrop-filter: blur(3px); }
+
+        /* =========================================
+           ФУТЕР (ТЕМНИЙ) ТА ВЕЛИКА СІТКА ПАРТНЕРІВ
+           ========================================= */
+        .main-footer { background-color: var(--footer-bg); margin-top: auto; border-top: 1px solid #1a1a1a; font-size: 0.9rem; color: #fff; }
+        .footer-gold-line { height: 3px; width: 100%; background: linear-gradient(90deg, transparent 0%, var(--club-gold) 50%, transparent 100%); opacity: 0.8; }
+        .footer-socials a { display: inline-flex; width: 38px; height: 38px; background: #222; color: #ccc; border-radius: 50%; align-items: center; justify-content: center; margin-right: 10px; transition: 0.3s; border: 1px solid #333; text-decoration: none; }
+        .footer-socials a:hover { background: var(--club-gold); color: black; border-color: var(--club-gold); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(252, 203, 26, 0.3); }
+
+        /* НОВА ГНУЧКА СІТКА ДЛЯ БАГАТЬОХ ЛОГОТИПІВ */
+        .footer-partners-wall {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 30px; /* Відстань між усіма логотипами */
+            margin-bottom: 20px;
+        }
+
+        .footer-partner-link {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .footer-partner-logo {
+            max-width: 100%;
+            max-height: 80px; /* Стандартний розмір */
+            object-fit: contain;
+            filter: brightness(0) invert(1) opacity(0.5); /* Сірий прозорий */
+            transition: all 0.3s ease;
+        }
+
+        /* Винятки для розмірів */
+        .kredo-footer-logo { max-height: 160px !important; } /* Кредо найбільше */
+        .gov-footer-logo { max-height: 90px !important; } /* ЛМР/ЛОДА трохи більші за Боско */
+
+        .footer-partner-link:hover .footer-partner-logo {
+            filter: brightness(1) invert(0) opacity(1); /* Колір при наведенні */
+            transform: scale(1.05);
+        }
+
+        /* Текстові посилання Боско (окремо) */
+        .footer-bosco-subs {
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; width: 100%; margin-top: 10px;
+        }
+        .footer-bosco-sub-link { font-size: 0.65rem; color: #666; font-weight: 700; text-transform: uppercase; text-decoration: none; transition: 0.3s; letter-spacing: 1px; }
+        .footer-bosco-sub-link:hover { color: var(--club-gold); }
+        .footer-bosco-divider { color: #333; font-size: 0.8rem; }
+
+
+        .table-modal-glass { background: #ffffff !important; border: 1px solid #ddd; border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); }
+        .btn-tab.active { background-color: var(--club-gold) !important; color: black !important; font-weight: 800; }
+        .btn-tab { color: #666; font-weight: 700; }
+        .messages-container { position: fixed; top: 110px; right: 30px; z-index: 9999; max-width: 350px; }
+
+        @media (max-width: 1200px) { .desktop-header-container { padding: 0 15px; } }
+
+        @media (max-width: 992px) {
+            .desktop-header { display: none !important; }
+            .page-wrapper { padding-top: 60px; }
+            .mobile-btn-toggle { display: flex; }
+            .top-panel-mobile { display: flex; }
+            .top-panel-mobile .profile-pill { background: #fff; color: #333; }
+            .top-panel-mobile .username-text { display: none !important; }
+            .top-panel-mobile .btn-admin-quick { display: none !important; }
+            .top-panel-mobile .auth-btn { padding: 6px 12px; font-size: 0.7rem; }
+            .top-panel-mobile .logout-btn { color: #666; }
+            .footer-col { text-align: center; margin-bottom: 20px; }
+            .footer-socials { justify-content: center; display: flex; }
+
+            /* Мобільні розміри логотипів */
+            .footer-partners-wall { gap: 20px; }
+            .footer-partner-logo { max-height: 60px; }
+            .gov-footer-logo { max-height: 70px !important; }
+            .kredo-footer-logo { max-height: 120px !important; }
+
+            .messages-container { right: 15px; top: 90px; width: calc(100% - 30px); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="desktop-header d-none d-lg-flex">
+        <div class="desktop-header-container">
+
+            <div class="header-left">
+                <a href="{% url 'home' %}" class="header-logo">
+                    <img src="{% static 'logo.png' %}" alt="Logo">
+                </a>
+            </div>
+
+            <nav class="desktop-nav-menu">
+                <a href="{% url 'home' %}" class="desktop-nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Головна</a>
+                <a href="{% url 'about_club' %}" class="desktop-nav-link {% if 'about' in request.path %}active{% endif %}">Історія</a>
+                <a href="/achievements/" class="desktop-nav-link desktop-nav-fame {% if 'achievements' in request.path %}active{% endif %}">Досягнення</a>
+                <a href="{% url 'news_list' %}" class="desktop-nav-link {% if 'news' in request.path %}active{% endif %}">Новини</a>
+                <a href="{% url 'team_list' %}" class="desktop-nav-link {% if 'team' in request.path %}active{% endif %}">Команда</a>
+                <a href="{% url 'matches_page' %}" class="desktop-nav-link {% if 'matches' in request.path %}active{% endif %}">Матчі</a>
+                <a href="{% url 'fans_page' %}" class="desktop-nav-link {% if 'fans' in request.path %}active{% endif %}"> Тренувальна база</a>
+                <a href="{% url 'shop_list' %}" class="desktop-nav-link {% if 'shop' in request.path %}active{% endif %}">Магазин</a>
+
+                <a href="{% url 'join_team' %}" class="desktop-nav-link text-warning {% if 'join' in request.path %}active{% endif %}">Приєднатися</a>
+                <a href="{% url 'partners' %}" class="desktop-nav-link {% if 'partners' in request.path %}active{% endif %}">Партнери</a>
+                <a href="{% url 'donate_page' %}" class="desktop-nav-link {% if 'donate_page' in request.path %}active{% endif %}">Підтримати</a>
+            </nav>
+
+            <div class="header-right">
+                <div class="header-actions">
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff %}
+                            <a href="/admin/" class="btn-admin-quick" title="Панель керування"><i class="fas fa-user-shield"></i></a>
+                        {% endif %}
+                        <a href="{% url 'profile' %}" class="profile-pill">
+                            <div class="icon-circle"><i class="fas fa-user"></i></div>
+                            <span class="username-text">{{ user.username }}</span>
+                        </a>
+                        <form action="{% url 'account_logout' %}" method="post" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn" title="Вийти"><i class="fas fa-sign-out-alt"></i></button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'account_signup' %}" class="auth-btn btn-register">Реєстрація</a>
+                        <a href="{% url 'account_login' %}" class="auth-btn btn-login">Увійти</a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <button class="mobile-btn-toggle" id="mobile-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="sidebar-overlay"></div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'logo.png' %}" alt="Logo">
+            </a>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"><i class="fas fa-home"></i> Головна</a>
+            <a href="{% url 'about_club' %}" class="nav-link {% if 'about' in request.path %}active{% endif %}"><i class="fas fa-history"></i> Історія</a>
+            <a href="/achievements/" class="nav-link nav-link-hall-of-fame {% if 'achievements' in request.path %}active{% endif %}"><i class="fas fa-trophy"></i> Досягнення</a>
+            <a href="{% url 'news_list' %}" class="nav-link {% if 'news' in request.path %}active{% endif %}"><i class="fas fa-newspaper"></i> Новини</a>
+            <a href="{% url 'team_list' %}" class="nav-link {% if 'team' in request.path %}active{% endif %}"><i class="fas fa-users"></i> Команда</a>
+            <a href="{% url 'matches_page' %}" class="nav-link {% if 'matches' in request.path %}active{% endif %}"><i class="fas fa-calendar-check"></i> Матчі</a>
+            <a href="{% url 'shop_list' %}" class="nav-link {% if 'shop' in request.path %}active{% endif %}"><i class="fas fa-shopping-bag"></i> Магазин</a>
+            <a href="{% url 'fans_page' %}" class="nav-link {% if 'fans' in request.path %}active{% endif %}"><i class="fas fa-building"></i> Тренувальна база</a>
+            <a href="{% url 'gallery_list' %}" class="nav-link {% if 'gallery' in request.path %}active{% endif %}"><i class="fas fa-images"></i> Галерея</a>
+            <a href="{% url 'partners' %}" class="nav-link {% if 'partners' in request.path %}active{% endif %}"><i class="fas fa-handshake"></i> Партнери</a>
+            <a href="{% url 'donate_page' %}" class="nav-link nav-link-donate-simple mt-2 fw-bold"><i class="fas fa-heart"></i> ПІДТРИМАТИ</a>
+            <a href="{% url 'join_team' %}" class="nav-link text-warning border border-warning mt-4 {% if 'join' in request.path %}active{% endif %}" style="background: rgba(252, 203, 26, 0.05);"><i class="fas fa-tshirt"></i> Приєднатися</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="top-panel-mobile">
+            <div class="d-flex align-items-center gap-2">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="profile-pill">
+                        <div class="icon-circle"><i class="fas fa-user"></i></div>
+                    </a>
+                    <form action="{% url 'account_logout' %}" method="post" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn" title="Вийти"><i class="fas fa-sign-out-alt"></i></button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'account_login' %}" class="auth-btn btn-login">Увійти</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-lg border-0"
+                     style="background: #fff; color: #333; border-left: 5px solid {% if message.tags == 'success' %}#28a745{% else %}#fccb1a{% endif %}; border-radius: 12px;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas {% if message.tags == 'success' %}fa-check-circle text-success{% else %}fa-info-circle text-warning{% endif %} me-3" style="font-size: 1.5rem;"></i>
+                        <div class="fw-bold small">{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="page-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+
+        <footer class="main-footer">
+            <div class="footer-gold-line"></div>
+            <div class="container py-5">
+                <div class="row align-items-center justify-content-between">
+
+                    <div class="col-lg-6 footer-col text-lg-start">
+                        <div class="d-flex align-items-center mb-3 justify-content-center justify-content-lg-start">
+                            <img src="{% static 'logo.png' %}" alt="Logo" style="height: 50px; margin-right: 15px;">
+                            <div>
+                                <h5 class="fw-900 text-uppercase text-white m-0 lh-1"> <span class="text-warning" style="color: #D4AF37 !important;">ПОКРОВА АМП</span></h5>
+                                <small class="text-white-50 fw-bold" style="font-size: 0.75rem;">Перший професійний клуб з ампфутболу</small>
+                            </div>
+                        </div>
+
+                        <div class="footer-socials mt-4">
+                            <a href="https://facebook.com/pokrova.amp.lviv/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://instagram.com/pokrova_lviv_amp_football/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="https://youtube.com/@PokrovaAMPLviv" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.tiktok.com/@pokrova.amp.footb" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 footer-col text-lg-end mt-4 mt-lg-0">
+                        <h6 class="fw-bold text-white text-uppercase mb-3 small opacity-75">Контакти</h6>
+                        <ul class="list-unstyled footer-contact-list small m-0 text-white-50 fw-bold">
+                            <li class="mb-2"><i class="fas fa-map-marker-alt text-warning me-2"></i> Львів, вул. Кривчицька дорога 19а</li>
+                            <li class="mb-2"><i class="fas fa-envelope text-warning me-2"></i> ampokrova@gmail.com</li>
+                            <li><i class="fas fa-phone text-warning me-2"></i> +38 (067) 371-78-78</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row mt-5 pt-4" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                    <div class="col-12">
+                        <div class="footer-partners-wall">
+
+                            <a href="https://city-adm.lviv.ua/" target="_blank" class="footer-partner-link" title="Львівська міська рада">
+                                <img src="{% static 'images/lmr_logo.png' %}" alt="ЛМР" class="footer-partner-logo gov-footer-logo">
+                            </a>
+                            <a href="https://loda.gov.ua/" target="_blank" class="footer-partner-link" title="Львівська ОВА">
+                                <img src="{% static 'images/loda_logo.png' %}" alt="ЛОДА" class="footer-partner-logo gov-footer-logo">
+                            </a>
+
+                            <a href="https://apteka-ds.com.ua/" target="_blank" class="footer-partner-link" title="Аптека DS">
+                                <img src="{% static 'images/ds_logo.png' %}" alt="Аптека DS" class="footer-partner-logo">
+                            </a>
+
+                            <a href="https://kredo-development.com.ua/" target="_blank" class="footer-partner-link" title="KREDO Development">
+                                <img src="{% static 'images/kredo_logo.png' %}" alt="KREDO Development" class="footer-partner-logo kredo-footer-logo">
+                            </a>
+
+                            <a href="https://salesianmissions.org/about-us/who-we-are/" target="_blank" class="footer-partner-link" title="Don Bosco Mission Bonn">
+                                <img src="{% static 'images/bosco/mission_bonn.png' %}" alt="Mission Bonn" class="footer-partner-logo">
+                            </a>
+                            <a href="https://www.don-bosco-mondo.de/weltwerker-hautnah" target="_blank" class="footer-partner-link" title="Don Bosco Mondo">
+                                <img src="{% static 'images/bosco/mondo.png' %}" alt="Mondo" class="footer-partner-logo">
+                            </a>
+                            <a href="https://www.donbosco.ch/ueber-uns/jugendhilfe-weltweit/" target="_blank" class="footer-partner-link" title="Jugendhilfe Weltweit">
+                                <img src="{% static 'images/bosco/jugendhilfe.png' %}" alt="Jugendhilfe" class="footer-partner-logo">
+                            </a>
+                            <a href="#" target="_blank" class="footer-partner-link" title="Salesian Missions">
+                                <img src="{% static 'images/bosco/salesian.png' %}" alt="Salesian" class="footer-partner-logo">
+                            </a>
+
+                        </div>
+
+                        <div class="footer-bosco-subs mt-4">
+                            <a href="https://salesianmissions.org/about-us/who-we-are/?utm_source=google&utm_medium=cpc+grant&gad_source=1&gad_campaignid=21858957993&gbraid=0AAAAADwLi4-4Pa7DB-Vet5JuED8zxtrWm&gclid=Cj0KCQjwj47OBhCmARIsAF5wUEHObg4Y1cL44IfRHSvB_8jFvAH06UdWFJVcrZRSKWgyLXvbMV4NmtEaAlWBEALw_wcB" target="_blank" class="footer-bosco-sub-link">Don Bosco Mission Bonn</a>
+                            <span class="footer-bosco-divider d-none d-md-inline">|</span>
+                            <a href="https://www.don-bosco-mondo.de/weltwerker-hautnah" target="_blank" class="footer-bosco-sub-link">Don Bosco Mondo</a>
+                            <span class="footer-bosco-divider d-none d-md-inline">|</span>
+                            <a href="https://www.donbosco.ch/ueber-uns/jugendhilfe-weltweit/" target="_blank" class="footer-bosco-sub-link">Jugendhilfe Weltweit</a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-bottom py-3" style="background: #050505;">
+                <div class="container text-center">
+                    <small class="text-white-50 fw-bold" style="font-size: 0.75rem;">&copy; {% now "Y" %} ПОКРОВА АМП. Всі права захищено.</small>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <div class="modal fade" id="tableModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 1200px;">
+            <div class="modal-content table-modal-glass">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-item"><button class="nav-link active btn-tab" id="pills-super-tab" data-bs-toggle="pill" data-bs-target="#pills-super">Суперліга</button></li>
+                        <li class="nav-item"><button class="nav-link btn-tab" id="pills-first-tab" data-bs-toggle="pill" data-bs-target="#pills-first">Перша Ліга</button></li>
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-super">{% include 'includes/table_snippet.html' with league_type='SUPER' %}</div>
+                        <div class="tab-pane fade" id="pills-first">{% include 'includes/table_snippet.html' with league_type='FIRST' %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init({ duration: 800, once: true, offset: 50 });
+
+      const mobileToggle = document.getElementById('mobile-toggle');
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      const icon = mobileToggle.querySelector('i');
+
+      function toggleMenu() {
+          sidebar.classList.toggle('active');
+          if (sidebar.classList.contains('active')) {
+              overlay.style.display = 'block';
+              icon.classList.remove('fa-bars');
+              icon.classList.add('fa-times');
+          } else {
+              overlay.style.display = 'none';
+              icon.classList.remove('fa-times');
+              icon.classList.add('fa-bars');
+          }
+      }
+
+      if (mobileToggle) {
+          mobileToggle.addEventListener('click', toggleMenu);
+          overlay.addEventListener('click', toggleMenu);
+      }
+
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 992 && sidebar.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
+      });
+    </script>
+<div id="fcCookieCard" class="cookie-card-premium">
+    <div class="cookie-card-header">
+        <i class="fas fa-shield-alt icon-gold"></i>
+        <span class="cookie-title">Файли Cookie</span>
+    </div>
+    <div class="cookie-card-body">
+        Цей сайт використовує cookie для авторизації вболівальників та збереження налаштувань. Продовжуючи використання сайту, ви погоджуєтесь із нашою політикою.
+    </div>
+    <button id="btnAcceptCookie" class="btn-cookie-solid">Зрозуміло</button>
+</div>
+
+<style>
+    .cookie-card-premium {
+        position: fixed; bottom: 30px; right: -400px; width: 320px;
+        background: #ffffff; border-top: 4px solid #fccb1a; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border-radius: 12px; padding: 20px; z-index: 9999;
+        transition: right 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+        opacity: 0; visibility: hidden; display: flex; flex-direction: column; gap: 15px;
+    }
+    .cookie-card-premium.show { right: 30px; opacity: 1; visibility: visible; }
+    .cookie-card-header { display: flex; align-items: center; gap: 10px; }
+    .icon-gold { color: #fccb1a; font-size: 1.4rem; }
+    .cookie-title { font-weight: 900; font-size: 1.1rem; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.5px; }
+    .cookie-card-body { font-size: 0.85rem; color: #666; line-height: 1.5; font-weight: 500; }
+    .btn-cookie-solid { width: 100%; background: #1a1a1a; color: #fccb1a; border: none; padding: 12px; border-radius: 8px; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; cursor: pointer; transition: 0.3s; }
+    .btn-cookie-solid:hover { background: #fccb1a; color: #1a1a1a; transform: translateY(-2px); }
+
+    @media (max-width: 768px) {
+        .cookie-card-premium { width: 100%; border-radius: 20px 20px 0 0; right: 0 !important; bottom: -300px; border-top: none; border-bottom: 4px solid #fccb1a; transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .cookie-card-premium.show { bottom: 0; }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const card = document.getElementById("fcCookieCard");
+        const acceptBtn = document.getElementById("btnAcceptCookie");
+        if (!localStorage.getItem("fc_cookie_card_accepted")) { setTimeout(() => { card.classList.add("show"); }, 1000); }
+        acceptBtn.addEventListener("click", function() {
+            localStorage.setItem("fc_cookie_card_accepted", "true");
+            if (window.innerWidth <= 768) { card.style.bottom = "-300px"; } else { card.style.right = "-400px"; }
+            setTimeout(() => card.classList.remove("show"), 600);
+        });
+    });
+</script>
+</body>
+</html>

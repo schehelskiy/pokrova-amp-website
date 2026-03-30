@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="shop-page-light-bg">
+    <div class="ambient-glow"></div>
+
+    <div class="container-fluid container-xl position-relative z-2 main-shop-container">
+
+        <div class="shop-header mb-4 mb-md-5" data-aos="fade-down">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-4">
+
+                <div class="text-center text-lg-start">
+                    <h5 class="text-muted text-uppercase ls-2 small fw-bold mb-1">Official Store</h5>
+                    <h1 class="text-dark fw-900 text-uppercase display-5 m-0 category-title">{{ active_category_name }}</h1>
+                </div>
+
+                <div class="category-pills-wrapper w-100 mt-2 mt-lg-0">
+                    <div class="category-pills">
+                        <a href="{% url 'shop_list' %}" class="cat-pill {% if not active_category_code %}active{% endif %}">Всі</a>
+                        {% for cat in menu_categories %}
+                        <a href="{% url 'shop_category' cat.slug %}" class="cat-pill {% if active_category_code == cat.code %}active{% endif %}">
+                            {{ cat.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="cart-dropdown-wrapper">
+                    <button class="cart-btn-floating" onclick="toggleCart()">
+                        <i class="fas fa-shopping-bag"></i>
+                        {% if mini_cart_items %}
+                        <span class="cart-badge">{{ mini_cart_items|length }}</span>
+                        {% endif %}
+                    </button>
+
+                    <div id="miniCartPopup" class="mini-cart-popup">
+                        <div class="cart-header">
+                            <span class="fw-bold text-dark">Ваш кошик</span>
+                            <button onclick="toggleCart()" class="close-btn"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="cart-body scroll-hide">
+                            {% if mini_cart_items %}
+                            {% for item in mini_cart_items %}
+                            <div class="mini-cart-item">
+                                <div class="item-img">
+                                    {% if item.product.image %}<img src="{{ item.product.image.url }}">{% else %}<i class="fas fa-camera text-muted"></i>{% endif %}
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name text-dark">{{ item.product.name }}</div>
+                                    <div class="item-meta text-muted">{{ item.quantity }} x {{ item.product.price|floatformat:0 }} ₴</div>
+                                    {% if item.size or item.color %}
+                                    <div class="item-meta fw-bold text-gold-dark">{{ item.size }} {{ item.color }}</div>
+                                    {% endif %}
+                                </div>
+                                <a href="{% url 'cart_remove' item.key %}" class="item-remove"><i class="fas fa-trash"></i></a>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="text-center py-4 opacity-50"><p class="m-0 small text-muted">Пусто</p></div>
+                            {% endif %}
+                        </div>
+                        <div class="cart-footer">
+                            <div class="d-flex justify-content-between mb-3 fw-bold text-dark"><span>Разом:</span><span class="text-gold-dark">{{ mini_cart_total|floatformat:0 }} ₴</span></div>
+                            <a href="{% url 'cart_detail' %}" class="btn btn-warning w-100 fw-bold text-dark small" style="background-color: var(--club-gold); border:none;">Оформити</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card-wrapper" data-aos="fade-up">
+
+                <form action="{% url 'cart_add' product.id %}" method="post" class="h-100">
+                    {% csrf_token %}
+
+                    <div class="light-premium-card">
+                        <div class="card-badges">
+                            {% if product.old_price %}<span class="badge-sale">SALE</span>{% else %}<span class="badge-new">NEW</span>{% endif %}
+                        </div>
+
+                        <a href="{% url 'product_detail' product.id %}" class="img-container d-block">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                            <div class="no-photo"><i class="fas fa-camera"></i></div>
+                            {% endif %}
+                        </a>
+
+                        <div class="card-info">
+                            <a href="{% url 'product_detail' product.id %}" class="text-decoration-none">
+                                <h4 class="product-name">{{ product.name }}</h4>
+                            </a>
+
+                            <div class="price-block mb-2">
+                                {% if product.old_price %}
+                                <span class="old-price">{{ product.old_price|floatformat:0 }}</span>
+                                <span class="current-price text-danger">{{ product.price|floatformat:0 }} ₴</span>
+                                {% else %}
+                                <span class="current-price text-dark">{{ product.price|floatformat:0 }} ₴</span>
+                                {% endif %}
+                            </div>
+
+                            {% if product.has_sizes or product.has_colors %}
+                            <div class="options-grid mb-2">
+                                {% if product.has_sizes %}
+                                <div class="opt-group">
+                                    <select name="size" class="custom-select">
+                                        <option value="S">S</option><option value="M" selected>M</option><option value="L">L</option><option value="XL">XL</option>
+                                    </select>
+                                </div>
+                                {% endif %}
+                                {% if product.has_colors %}
+                                <div class="opt-group">
+                                    <select name="color" class="custom-select">
+                                        <option value="Білий">Білий</option><option value="Синій">Синій</option>
+                                    </select>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            <div class="action-row mt-auto">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="add-btn w-100" title="В кошик">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="empty-light-state mx-auto" style="max-width: 400px; padding: 40px; background: #fff; border-radius: 20px; border: 1px dashed #ccc;">
+                    <i class="fas fa-box-open text-muted fa-3x mb-3 opacity-50"></i>
+                    <h4 class="text-dark fw-bold">Тут поки пусто...</h4>
+                    <p class="text-muted small m-0">У цій категорії ще немає товарів.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <div class="promo-banner-fullwidth mt-5" data-aos="fade-up">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col-md-8 text-center text-md-start mb-3 mb-md-0">
+                    {% if user.is_authenticated %}
+                        <h3 class="text-black fw-900 text-uppercase mb-1"><i class="fas fa-check-circle me-2"></i>Твоя знижка -5% активна!</h3>
+                        <p class="text-dark mb-0 fw-bold opacity-75">Дякуємо, що ти в команді. Ціни в кошику будуть перераховані автоматично.</p>
+                    {% else %}
+                        <h3 class="text-black fw-900 text-uppercase mb-1">Отримай клубну знижку -5%</h3>
+                        <p class="text-dark mb-0 fw-bold opacity-75">Авторизуйся та купуй дешевше.</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="btn btn-dark rounded-pill px-4 fw-bold shadow-sm">Мій кабінет</a>
+                    {% else %}
+                        <a href="{% url 'account_login' %}" class="btn btn-dark rounded-pill px-4 fw-bold shadow-sm">Увійти</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function toggleCart() { document.getElementById('miniCartPopup').classList.toggle('active'); }
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.cart-dropdown-wrapper')) {
+            document.getElementById('miniCartPopup').classList.remove('active');
+        }
+    });
+</script>
+
+<style>
+/* === ОСНОВНІ ЗМІННІ (СВІТЛІ) === */
+:root {
+    --bg-light: #f5f6f8;
+    --card-bg: #ffffff;
+    --club-gold: #fccb1a;
+    --gold-dark: #cfa12b;
+    --border-light: #eaeaea;
+    --text-dark: #1a1a1a;
+}
+
+.text-gold-dark { color: var(--gold-dark) !important; }
+
+/* === ОСНОВА === */
+.shop-page-light-bg { min-height: 100vh; background-color: var(--bg-light); display: flex; flex-direction: column; overflow-x: hidden; }
+.main-shop-container { padding-top: 130px; flex-grow: 1; padding-bottom: 50px; }
+.ambient-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 30%, rgba(252, 203, 26, 0.08), transparent 70%); pointer-events: none; z-index: 0; }
+
+/* === БАНЕР ЗНИЖКИ === */
+.promo-banner-fullwidth {
+    width: 100%; background: linear-gradient(90deg, #fccb1a 0%, #d4a000 100%);
+    padding: 40px 0; border-top: 1px solid rgba(0,0,0,0.05); position: relative; z-index: 2;
+}
+
+/* === МЕНЮ КАТЕГОРІЙ === */
+.category-pills-wrapper { width: 100%; overflow-x: auto; white-space: nowrap; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
+.category-pills-wrapper::-webkit-scrollbar { display: none; }
+.category-pills { display: inline-flex; gap: 10px; min-width: 100%; }
+
+.cat-pill {
+    flex-shrink: 0; display: inline-block; padding: 8px 25px; border-radius: 50px;
+    background: var(--card-bg); border: 1px solid var(--border-light);
+    color: #666; text-decoration: none; font-weight: 800; text-transform: uppercase; font-size: 0.8rem;
+    transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+}
+.cat-pill:hover { color: var(--text-dark); border-color: #ccc; transform: translateY(-2px); }
+.cat-pill.active { background: var(--club-gold); color: #000; border-color: var(--club-gold); box-shadow: 0 5px 15px rgba(252, 203, 26, 0.3); }
+
+/* === КОШИК (ПЛАВАЮЧА КНОПКА ТА ПОПАП) === */
+.cart-dropdown-wrapper { position: relative; z-index: 1000; }
+.shop-header { position: relative; z-index: 1000; }
+
+.cart-btn-floating {
+    width: 45px; height: 45px; border-radius: 50%; background: var(--card-bg);
+    border: 1px solid var(--border-light); color: var(--text-dark);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.cart-btn-floating:hover { border-color: var(--club-gold); color: var(--gold-dark); transform: translateY(-2px); }
+.cart-badge { position: absolute; top: -5px; right: -5px; width: 22px; height: 22px; background: #ff3b30; border-radius: 50%; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; color: white; }
+
+.mini-cart-popup {
+    position: absolute; top: 60px; right: 0; width: 350px;
+    background: #fff; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid var(--border-light);
+    color: var(--text-dark); z-index: 9999;
+    opacity: 0; visibility: hidden; transform: translateY(-10px); transition: 0.3s;
+}
+.mini-cart-popup.active { opacity: 1; visibility: visible; transform: translateY(0); }
+.cart-header { padding: 15px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: #f8f9fb; border-radius: 16px 16px 0 0; }
+.close-btn { background: transparent; border: none; color: #aaa; cursor: pointer; transition: 0.3s; }
+.close-btn:hover { color: #ff3b30; }
+
+.cart-body { max-height: 300px; overflow-y: auto; padding: 10px; }
+.mini-cart-item { display: flex; gap: 10px; padding: 10px; border-bottom: 1px solid #f0f0f0; position: relative; }
+.item-img { width: 50px; height: 50px; flex-shrink: 0; background: #f8f9fa; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #eaeaea; }
+.item-img img { width: 100%; height: 100%; object-fit: contain; }
+.item-info { flex-grow: 1; }
+.item-name { font-weight: 800; font-size: 0.85rem; }
+.item-remove { position: absolute; right: 10px; top: 10px; color: #ccc; transition: 0.3s; }
+.item-remove:hover { color: #ff3b30; }
+.cart-footer { padding: 15px; background: #f8f9fb; border-top: 1px solid var(--border-light); border-radius: 0 0 16px 16px; }
+
+/* === СІТКА ТОВАРІВ === */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
+    position: relative; z-index: 1;
+}
+
+/* === КАРТКА ТОВАРУ (СВІТЛА) === */
+.light-premium-card {
+    background: var(--card-bg); border: 1px solid var(--border-light);
+    border-radius: 20px; overflow: hidden; transition: 0.4s;
+    height: 100%; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+}
+.light-premium-card:hover { border-color: var(--club-gold); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(252, 203, 26, 0.15); }
+
+.img-container { position: relative; width: 100%; aspect-ratio: 4/5; background: #f8f9fb; overflow: hidden; padding: 0; border-bottom: 1px solid var(--border-light); }
+.img-container img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); }
+.light-premium-card:hover img { transform: scale(1.08); }
+.no-photo { width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 2rem; }
+
+.card-badges { position: absolute; top: 12px; left: 12px; z-index: 5; display: flex; flex-direction: column; gap: 5px; }
+.badge-new, .badge-sale { font-size: 0.7rem; font-weight: 900; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.badge-new { background: var(--club-gold); color: #000; }
+.badge-sale { background: #ff3b30; color: #fff; }
+
+.card-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+.product-name { color: var(--text-dark); font-size: 1.05rem; font-weight: 800; margin-bottom: 5px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: 0.3s; }
+.product-name:hover { color: var(--gold-dark); }
+
+.price-block { font-size: 1.2rem; font-weight: 900; }
+.old-price { font-size: 0.85rem; text-decoration: line-through; color: #999; font-weight: 500; margin-right: 5px; }
+
+/* СВІТЛІ СЕЛЕКТИ */
+.options-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+.custom-select {
+    width: 100%; background: #f8f9fb; border: 1px solid var(--border-light);
+    color: var(--text-dark); padding: 8px 12px; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer; outline: none; transition: 0.3s;
+}
+.custom-select:focus { border-color: var(--club-gold); background: #fff; box-shadow: 0 0 0 3px rgba(252, 203, 26, 0.1); }
+.opt-group { flex: 1; min-width: 0; }
+
+.action-row { display: flex; gap: 10px; align-items: stretch; margin-top: auto; padding-top: 15px; }
+.add-btn {
+    height: 45px; background: var(--club-gold); color: #000; border: none;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; transition: 0.3s; cursor: pointer; flex-shrink: 0;
+    font-weight: bold; box-shadow: 0 4px 15px rgba(252, 203, 26, 0.2);
+}
+.add-btn:hover { background: #111; color: var(--club-gold); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+/* === МОБІЛЬНА АДАПТАЦІЯ (ТЕЛЕФОН - 3 ТОВАРИ В РЯД) === */
+@media (max-width: 768px) {
+    .main-shop-container { padding-top: 100px; padding-left: 8px; padding-right: 8px; }
+
+    .shop-header { margin-bottom: 20px !important; }
+    .display-5 { font-size: 1.8rem; }
+    .category-pills-wrapper { margin-top: 10px; margin-bottom: 15px; }
+    .cat-pill { padding: 6px 15px; font-size: 0.7rem; }
+
+    /* 3 ТОВАРИ В РЯД */
+    .product-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px; }
+
+    /* Зменшена картка */
+    .light-premium-card { border-radius: 10px; }
+    .card-info { padding: 8px 5px; }
+
+    .product-name { font-size: 0.65rem; white-space: normal; line-height: 1.1; height: 2.2em; overflow: hidden; margin-bottom: 3px; }
+
+    .price-block { font-size: 0.8rem; margin-bottom: 4px !important; }
+    .old-price { display: none; }
+
+    /* Селекти МАКСИМАЛЬНО компактні для телефону */
+    .options-grid { gap: 2px; margin-bottom: 4px !important; }
+    .custom-select { height: 24px; font-size: 0.6rem; padding: 0; text-align: center; text-align-last: center; border-radius: 4px; }
+    .action-row { padding-top: 5px; }
+
+    /* Кнопка купити */
+    .add-btn { height: 28px; font-size: 0.8rem; border-radius: 6px; padding: 0; }
+    .add-btn i { font-size: 0.8rem; }
+
+    .card-badges { top: 4px; left: 4px; gap: 2px; }
+    .badge-new, .badge-sale { font-size: 0.5rem; padding: 2px 4px; border-radius: 2px; }
+
+    .mini-cart-popup { position: fixed; top: 80px; right: 5%; width: 90%; }
+}
+</style>
+
+{% endblock %}
